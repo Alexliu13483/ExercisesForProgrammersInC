@@ -1,3 +1,4 @@
+
 /*
  * SayingHelloTest.cpp
  *
@@ -15,7 +16,7 @@
 
 extern "C"
 {
-#include "SayingHello/SayingHello.h"
+#include <1_SayingHello/SayingHello.h>
 }
 
 #include "CppUTest/TestHarness.h"
