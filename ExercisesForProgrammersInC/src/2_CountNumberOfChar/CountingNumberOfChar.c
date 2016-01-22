@@ -20,11 +20,21 @@ void CountNumberOfChar_destroy() {
 }
 
 void CountNumberOfChar_setInputString(char * str) {
-	outputString = calloc(sizeof(char), strlen(str)+20);
-	sprintf(outputString, "%s has 5 characters.", str);
+	int countStr = strlen(str);
+
+	outputString = calloc(sizeof(char), countStr+32);
+	sprintf(outputString, "%s has %d characters.", str, countStr);
 }
 
 char * CountNumberOfChar_outputString() {
 	return outputString;
 }
 
+void CountNumberOfChar_inputByConsole() {
+	char str[80];
+
+	printf("\nWhat is the input string? ");
+	scanf("%79s", str);
+	CountNumberOfChar_setInputString(str);
+	printf("%s\n", outputString);
+}

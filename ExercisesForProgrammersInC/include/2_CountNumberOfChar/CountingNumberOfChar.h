@@ -12,5 +12,6 @@ void CountNumberOfChar_create();
 void CountNumberOfChar_destroy();
 void CountNumberOfChar_setInputString(char * str);
 char * CountNumberOfChar_outputString();
+void CountNumberOfChar_inputByConsole();
 
 #endif /* INCLUDE_2_COUNTNUMBEROFCHAR_COUNTINGNUMBEROFCHAR_H_ */
