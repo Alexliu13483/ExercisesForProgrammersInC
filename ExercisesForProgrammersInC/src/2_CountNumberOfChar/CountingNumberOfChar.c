@@ -30,11 +30,31 @@ char * CountNumberOfChar_outputString() {
 	return outputString;
 }
 
+
+static void getStringFromConsole(char * str) {
+	char c;
+	int i = 0;
+
+	do {
+		c = (char)getchar();
+		if(c == '\n' || c == '\r')
+			c = '\0';
+		str[i++] = c;
+	} while (c != '\0');
+}
+
 void CountNumberOfChar_inputByConsole() {
 	char str[80];
 
-	printf("\nWhat is the input string? ");
-	scanf("%79s", str);
-	CountNumberOfChar_setInputString(str);
-	printf("%s\n", outputString);
+	do {
+		printf("\nWhat is the input string? ");
+		getStringFromConsole(str);
+		if (str[0] != '\0') {
+			CountNumberOfChar_setInputString(str);
+			printf("%s\n", outputString);
+		} else {
+			printf("Please enter something.\n");
+		}
+
+	} while (str[0] == '\0');
 }

@@ -54,6 +54,15 @@ TEST(CountNumberCharTest, testStringProgramming)
 	STRCMP_EQUAL("Programming has 11 characters.", CountNumberOfChar_outputString());
 }
 
+TEST(CountNumberCharTest, testNullString)
+{
+	char str[] = "";
+
+	CountNumberOfChar_setInputString(str);
+
+	STRCMP_EQUAL(" has 0 characters.", CountNumberOfChar_outputString());
+}
+
 IGNORE_TEST(CountNumberCharTest, testInputByConsole)
 {
 	CountNumberOfChar_inputByConsole();
