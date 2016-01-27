@@ -16,7 +16,7 @@
 
 extern "C"
 {
-#include <1_SayingHello/SayingHello.h>
+#include "01_SayingHello/SayingHello.h"
 }
 
 #include "CppUTest/TestHarness.h"

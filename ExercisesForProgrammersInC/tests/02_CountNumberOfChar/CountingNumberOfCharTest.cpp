@@ -16,7 +16,7 @@
 
 extern "C"
 {
-#include "2_CountNumberOfChar/CountingNumberOfChar.h"
+#include "02_CountNumberOfChar/CountingNumberOfChar.h"
 }
 
 #include "CppUTest/TestHarness.h"

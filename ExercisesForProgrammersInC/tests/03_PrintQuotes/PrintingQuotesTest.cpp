@@ -16,7 +16,7 @@
 
 extern "C"
 {
-#include "3_PrintQuotes/PrintQuote.h"
+#include "03_PrintQuotes/PrintQuote.h"
 }
 
 #include "CppUTest/TestHarness.h"
