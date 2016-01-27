@@ -10,5 +10,6 @@
 
 void PrintQuote_create();
 char * PrintQuote_outputString(char * author, char * quote);
+char * PrintQuote_inputByConsole();
 
 #endif /* INCLUDE_3_PRINTQUOTES_PRINTQUOTE_H_ */

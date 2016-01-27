@@ -43,3 +43,11 @@ TEST(PrintQuotesTest, PrintObiWanQuote)
 	STRCMP_EQUAL("Obi-Wan Kenobi says, \"These aren't the droids you're looking for.\"",
 			PrintQuote_outputString(author, quote));
 }
+
+IGNORE_TEST(PrintQuotesTest, PrintFromConsole)
+{
+
+	STRCMP_EQUAL("Obi-Wan Kenobi says, \"These aren't the droids you're looking for.\"", PrintQuote_inputByConsole());
+}
+
+

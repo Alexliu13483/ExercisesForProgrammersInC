@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Common/Common.h"
 
 static char * outputString;
 
@@ -30,7 +31,7 @@ char * CountNumberOfChar_outputString() {
 	return outputString;
 }
 
-
+/*
 static void getStringFromConsole(char * str) {
 	char c;
 	int i = 0;
@@ -42,13 +43,13 @@ static void getStringFromConsole(char * str) {
 		str[i++] = c;
 	} while (c != '\0');
 }
-
+*/
 void CountNumberOfChar_inputByConsole() {
 	char str[80];
 
 	do {
 		printf("\nWhat is the input string? ");
-		getStringFromConsole(str);
+		Common_getStringFromConsole(str);
 		if (str[0] != '\0') {
 			CountNumberOfChar_setInputString(str);
 			printf("%s\n", outputString);
