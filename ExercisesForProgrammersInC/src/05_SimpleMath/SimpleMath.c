@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <stdbool.h>
 #include "Common/Common.h"
 
 static int sum;
@@ -58,10 +59,14 @@ void SimpleMath_inputFromConsole()
 	char number1[16];
 	char number2[16];
 
-	printf("\nWhat is the first number? ");
-	Common_getStringFromConsole(number1);
-	printf("What is the second number? ");
-	Common_getStringFromConsole(number2);
+	do {
+		printf("\nWhat is the first number? ");
+		Common_getStringFromConsole(number1);
+	} while (!Common_isDigitalString(number1));
+	do {
+		printf("What is the second number? ");
+		Common_getStringFromConsole(number2);
+	} while (!Common_isDigitalString(number2));
 	SimpleMath_calTwoTextNumbers(number1, number2);
 	printf("%s + %s = %d\n%s - %s = %d\n%s * %s = %d\n%s / %s = %d\n",
 			number1, number2, sum,

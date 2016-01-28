@@ -6,6 +6,9 @@
  */
 
 #include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
 
 void Common_getStringFromConsole(char * str) {
 	char c;
@@ -17,4 +20,16 @@ void Common_getStringFromConsole(char * str) {
 			c = '\0';
 		str[i++] = c;
 	} while (c != '\0');
+}
+
+bool Common_isDigitalString(char * str) {
+	int length = strlen(str);
+
+	if (!length)
+		return false;
+
+	for (int i=0; i < length; i++)
+		if (!isdigit((int)str[i]))
+			return false;
+	return true;
 }
