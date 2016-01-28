@@ -59,8 +59,9 @@ void SimpleMath_inputFromConsole()
 	char number1[16];
 	char number2[16];
 
+	printf("\n");
 	do {
-		printf("\nWhat is the first number? ");
+		printf("What is the first number? ");
 		Common_getStringFromConsole(number1);
 	} while (!Common_isDigitalString(number1));
 	do {

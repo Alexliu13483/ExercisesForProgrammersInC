@@ -47,7 +47,7 @@ TEST(SimpleMathTest, test_10and5)
 	LONGS_EQUAL(2, SimpleMath_getQuotient());
 }
 
-TEST(SimpleMathTest, test_InputFromConsole)
+IGNORE_TEST(SimpleMathTest, test_InputFromConsole)
 {
 	SimpleMath_inputFromConsole();
 	LONGS_EQUAL(15, SimpleMath_getSum());
