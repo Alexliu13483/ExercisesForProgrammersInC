@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 void Common_getStringFromConsole(char * str);
-bool Common_isDigitalString(char * str);
+bool Common_isIntegerString(char * str);
+bool Common_isDoubleString(char * str);
 
 #endif /* INCLUDE_COMMON_COMMON_H_ */

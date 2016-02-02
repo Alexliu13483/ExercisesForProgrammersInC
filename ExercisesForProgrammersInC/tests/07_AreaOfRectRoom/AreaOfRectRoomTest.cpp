@@ -46,6 +46,11 @@ TEST(AreaOfRectRoomTest, CalRectAreaTest_11_20)
 	DOUBLES_EQUAL(220.0, RectRoom_calAreaInFeet(11.0, 20.0), 0.000001);
 }
 
+TEST(AreaOfRectRoomTest, ConvertSquareFeet2MeterTest)
+{
+	DOUBLES_EQUAL(27.871, RectRoom_convertSquareFeetToSquareMeter(300), 0.001);
+}
+
 IGNORE_TEST(AreaOfRectRoomTest, InputByConsoleTest)
 {
 	char expect[] = "You entered dimensions of 15 feet by 20 feet.\nThe area is \n300 square feet\n27.871 square meters\n";

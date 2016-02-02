@@ -10,6 +10,7 @@
 
 void RectRoom_create();
 float RectRoom_calAreaInFeet(float length, float width);
+float RectRoom_convertSquareFeetToSquareMeter(float area);
 void RectRoom_calAreaInFeetFromConsole();
 char * RectRoom_getConsoleOutput();
 

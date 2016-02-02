@@ -44,11 +44,11 @@ void RetirementCalculator_calculateInputFromConsole() {
 	do {
 		printf("What is your current age? ");
 		Common_getStringFromConsole(current);
-	} while (!Common_isDigitalString(current));
+	} while (!Common_isIntegerString(current));
 	do {
 		printf("At what age would you like to retire? ");
 		Common_getStringFromConsole(retire);
-	} while (!Common_isDigitalString(retire));
+	} while (!Common_isIntegerString(retire));
 
 	curAge = atoi(current);
 	retAge = atoi(retire);

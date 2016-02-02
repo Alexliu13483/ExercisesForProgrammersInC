@@ -22,7 +22,7 @@ void Common_getStringFromConsole(char * str) {
 	} while (c != '\0');
 }
 
-bool Common_isDigitalString(char * str) {
+bool Common_isIntegerString(char * str) {
 	int length = strlen(str);
 
 	if (!length)
@@ -31,5 +31,23 @@ bool Common_isDigitalString(char * str) {
 	for (int i=0; i < length; i++)
 		if (!isdigit((int)str[i]))
 			return false;
+	return true;
+}
+
+bool Common_isDoubleString(char * str) {
+	int length = strlen(str);
+	bool gotDot = false;
+
+	if (!length)
+		return false;
+
+	for (int i=0; i < length; i++) {
+		if (str[i] == '.' && !gotDot)
+			gotDot = true;
+		else if (str[i] == '.' && gotDot)
+			return false;
+		if (!isdigit((int)str[i]) && str[i] != '.')
+			return false;
+	}
 	return true;
 }

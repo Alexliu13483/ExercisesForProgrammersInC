@@ -63,11 +63,11 @@ void SimpleMath_inputFromConsole()
 	do {
 		printf("What is the first number? ");
 		Common_getStringFromConsole(number1);
-	} while (!Common_isDigitalString(number1));
+	} while (!Common_isIntegerString(number1));
 	do {
 		printf("What is the second number? ");
 		Common_getStringFromConsole(number2);
-	} while (!Common_isDigitalString(number2));
+	} while (!Common_isIntegerString(number2));
 	SimpleMath_calTwoTextNumbers(number1, number2);
 	printf("%s + %s = %d\n%s - %s = %d\n%s * %s = %d\n%s / %s = %d\n",
 			number1, number2, sum,

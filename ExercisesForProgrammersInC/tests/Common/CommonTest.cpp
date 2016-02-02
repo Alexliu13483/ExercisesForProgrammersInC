@@ -36,16 +36,38 @@ TEST_GROUP(CommonTest)
 
 };
 
-TEST(CommonTest, testIsDigitalString_Normal)
+TEST(CommonTest, testIsIntegerString_Normal)
 {
 	char str[] = "0123456789";
 
-	CHECK_TRUE(Common_isDigitalString(str));
+	CHECK_TRUE(Common_isIntegerString(str));
 }
 
-TEST(CommonTest, testIsDigitalString_Abnormal)
+TEST(CommonTest, testIsIntegerString_Abnormal)
 {
 	char str[] = "0ABC";
 
-	CHECK_FALSE(Common_isDigitalString(str));
+	CHECK_FALSE(Common_isIntegerString(str));
 }
+
+TEST(CommonTest, testIsDoubleString_Normal)
+{
+	char str[] = "123.258";
+
+	CHECK_TRUE(Common_isDoubleString(str));
+}
+
+TEST(CommonTest, testIsDoubleString_Alphabet)
+{
+	char str[] = "123Dot258";
+
+	CHECK_FALSE(Common_isDoubleString(str));
+}
+
+TEST(CommonTest, testIsDoubleString_TwoDots)
+{
+	char str[] = "123..258";
+
+	CHECK_FALSE(Common_isDoubleString(str));
+}
+

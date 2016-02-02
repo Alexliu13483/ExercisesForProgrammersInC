@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include "Common/Common.h"
 
+#define SQUARE_FEET_TO_SQUARE_METER_RATIO	0.09290304
+
 char outputString[256];
 
 void RectRoom_create() {
@@ -19,7 +21,7 @@ float RectRoom_calAreaInFeet(float length, float width) {
 	return length * width;
 }
 
-double convertSquareFeetToSquareMeter(float area) {
+double RectRoom_convertSquareFeetToSquareMeter(float area) {
 	return area * 0.09290304;
 }
 
@@ -31,15 +33,20 @@ void RectRoom_calAreaInFeetFromConsole() {
 	float area;
 	float areaInSquareMeter;
 
-	printf("\nWhat is the length of the room in feet? ");
-	Common_getStringFromConsole(lengthStr);
+	do {
+		printf("\nWhat is the length of the room in feet? ");
+		Common_getStringFromConsole(lengthStr);
+	} while (!Common_isDoubleString(lengthStr));
 	length = atof(lengthStr);
-	printf("What is the width of the room in feet? ");
-	Common_getStringFromConsole(widthStr);
+
+	do {
+		printf("What is the width of the room in feet? ");
+		Common_getStringFromConsole(widthStr);
+	} while (!Common_isDoubleString(widthStr));
 	width = atof(widthStr);
 
 	area = RectRoom_calAreaInFeet(length, width);
-	areaInSquareMeter = convertSquareFeetToSquareMeter(area);
+	areaInSquareMeter = RectRoom_convertSquareFeetToSquareMeter(area);
 	sprintf(outputString,"You entered dimensions of %s feet by %s feet.\nThe area is \n%0.0f square feet\n%0.3f square meters\n",
 			lengthStr, widthStr,
 			area, areaInSquareMeter);
