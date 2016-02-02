@@ -42,7 +42,7 @@ TEST(RetirementCalculatorTest, testRetirement25_65)
 	STRCMP_EQUAL(expect, RetirementCalculator_calculate(25, 65));
 }
 
-TEST(RetirementCalculatorTest, testInputFromConsole)
+IGNORE_TEST(RetirementCalculatorTest, testInputFromConsole)
 {
 	char expect[] = "You have 40 years left until you can retire.\nIt's 2016, so you can retire in 2056.";
 	RetirementCalculator_calculateInputFromConsole();
