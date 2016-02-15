@@ -106,3 +106,10 @@ TEST(PizzaPartyTest, OutputStringTest_LeftoverPlural)
 	STRCMP_EQUAL(expect, PizzaParty_getOutputString());
 }
 
+TEST(PizzaPartyTest, CalculateNeedOfPizza)
+{
+	int people = 6;
+	int peieceOfpizza = 2;
+
+	LONGS_EQUAL(2, PizzaParty_calulateNeedOfPizzas(people, peieceOfpizza));
+}

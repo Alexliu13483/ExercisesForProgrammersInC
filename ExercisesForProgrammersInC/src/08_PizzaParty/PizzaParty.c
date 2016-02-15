@@ -59,3 +59,11 @@ int PizzaParty_getPiecesLeftover() {
 char * PizzaParty_getOutputString() {
 	return outputString;
 }
+
+int PizzaParty_calulateNeedOfPizzas(int people, int pieceOfPizza) {
+	int totalPiece = people * pieceOfPizza;
+
+	if (totalPiece % PIECE_OF_PIZZA)
+		return totalPiece / PIECE_OF_PIZZA + 1;
+	return totalPiece / PIECE_OF_PIZZA;
+}

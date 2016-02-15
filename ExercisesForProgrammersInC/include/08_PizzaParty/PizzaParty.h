@@ -13,5 +13,6 @@ void PizzaParty_dividePizzas(int people, int pizzas);
 int PizzaParty_getPiecesEachPerson();
 int PizzaParty_getPiecesLeftover();
 char * PizzaParty_getOutputString();
+int PizzaParty_calulateNeedOfPizzas(int people, int pieceOfPizza);
 
 #endif /* INCLUDE_08_PIZZAPARTY_PIZZAPARTY_H_ */
