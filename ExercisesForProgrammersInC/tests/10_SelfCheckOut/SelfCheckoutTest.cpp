@@ -38,48 +38,42 @@ TEST_GROUP(SelfCheckoutTest)
 
 };
 
-TEST(SelfCheckoutTest, CheckoutProcessTest)
+TEST(SelfCheckoutTest, Checkout3Items)
 {
-	CheckoutInputData inputData[3];
 	CheckoutResults * resultsData;
 
-	inputData[0].price = 25;
-	inputData[0].quantity = 2;
-	inputData[1].price = 10;
-	inputData[1].quantity = 1;
-	inputData[2].price = 4;
-	inputData[2].quantity = 1;
+	SelfCheckout_accumulateEachItem(25.0, 2);
+	SelfCheckout_accumulateEachItem(10.0, 1);
+	SelfCheckout_accumulateEachItem(4.0, 1);
+	resultsData = SelfCheckout_getAccumulatedResults();
 
-	resultsData = SelfCheckout_calculate(inputData, 3);
 	DOUBLES_EQUAL(64.0, resultsData->subtotal, 0.001);
 	DOUBLES_EQUAL(3.52, resultsData->tax, 0.001);
 	DOUBLES_EQUAL(67.52, resultsData->total, 0.001);
 }
 
-TEST(SelfCheckoutTest, CheckoutProcessTextOutput)
+TEST(SelfCheckoutTest, Checkout3ItemsTextOutput)
 {
-	CheckoutInputData inputData[3];
+	CheckoutResults * resultsData;
 	char expect[] = "Subtotal: $64.00\nTax: $3.52\nTotal: $67.52";
 
-	inputData[0].price = 25;
-	inputData[0].quantity = 2;
-	inputData[1].price = 10;
-	inputData[1].quantity = 1;
-	inputData[2].price = 4;
-	inputData[2].quantity = 1;
+	SelfCheckout_accumulateEachItem(25.0, 2);
+	SelfCheckout_accumulateEachItem(10.0, 1);
+	SelfCheckout_accumulateEachItem(4.0, 1);
+	resultsData = SelfCheckout_getAccumulatedResults();
 
-	STRCMP_EQUAL(expect, SelfCheckout_calculateAndTextOutput(inputData, 3));
+	STRCMP_EQUAL(expect, SelfCheckout_getTextOutput(resultsData));
 }
 
-IGNORE_TEST(SelfCheckoutTest, testInputProcess)
+IGNORE_TEST(SelfCheckoutTest, CheckoutInputByConcole)
 {
-	CheckoutInputData inputData[3];
+	CheckoutResults * resultsData;
 	char expect[] = "Subtotal: $64.00\nTax: $3.52\nTotal: $67.52";
 	char * resultStr;
 
-	SelfCheckout_inputItems(inputData, 3);
-	resultStr = SelfCheckout_calculateAndTextOutput(inputData, 3);
+	resultsData = SelfCheckout_accumulateItemsByConcole();
+	resultStr = SelfCheckout_getTextOutput(resultsData);
 	puts(resultStr);
 
-	STRCMP_EQUAL(expect, SelfCheckout_calculateAndTextOutput(inputData, 3));
+	STRCMP_EQUAL(expect, resultStr);
 }

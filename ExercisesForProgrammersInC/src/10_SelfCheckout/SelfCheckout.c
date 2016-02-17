@@ -12,48 +12,61 @@
 #include "10_SelfCheckout/SelfCheckout.h"
 
 #define TAX_RATE	0.055
+#define ESCAPE_CHAR	'\0'
+
+CheckoutResults accumulatedResults;
 
 void SelfCheckout_create() {
-
+	accumulatedResults.subtotal = 0;
+	accumulatedResults.tax = 0;
+	accumulatedResults.total = 0;
 }
 
-CheckoutResults * SelfCheckout_calculate(CheckoutInputData inputData[], int items) {
-	static CheckoutResults results;
-
-	results.subtotal = 0;
-	for (int i = 0; i < items; i++)
-		results.subtotal += inputData[i].price * inputData[i].quantity;
-	results.tax = results.subtotal * TAX_RATE;
-	results.total = results.subtotal + results.tax;
-
-	return &results;
+void SelfCheckout_accumulateEachItem(float price, int quantity) {
+	accumulatedResults.subtotal += price * quantity;
 }
 
-char * SelfCheckout_calculateAndTextOutput(CheckoutInputData inputData[], int items) {
-	CheckoutResults * results;
+CheckoutResults * SelfCheckout_getAccumulatedResults() {
+	accumulatedResults.tax = accumulatedResults.subtotal * TAX_RATE;
+	accumulatedResults.total = accumulatedResults.subtotal + accumulatedResults.tax;
+
+	return &accumulatedResults;
+}
+
+char * SelfCheckout_getTextOutput(CheckoutResults * resultsData) {
 	static char outputString[80];
 
-	results = SelfCheckout_calculate(inputData, items);
-	sprintf(outputString, "Subtotal: $%0.2f\nTax: $%0.2f\nTotal: $%0.2f", results->subtotal, results->tax, results->total);
+	sprintf(outputString, "Subtotal: $%0.2f\nTax: $%0.2f\nTotal: $%0.2f", resultsData->subtotal, resultsData->tax, resultsData->total);
 	return outputString;
 }
 
-void SelfCheckout_inputItems(CheckoutInputData inputData[], int items) {
+CheckoutResults * SelfCheckout_accumulateItemsByConcole() {
 	char priceStr[20];
 	char quantityStr[20];
+	float price;
+	int quantity;
 
 	printf("\n");
-	for (int i = 0; i < items; i++) {
+	for (int i = 1; ;i++) {
 		do {
-			printf("Enter the price of item %d: ", i+1);
+			printf("Enter the price of item %d: ", i);
 			Common_getStringFromConsole(priceStr);
-		} while (!Common_isDoubleString(priceStr));
-		inputData[i].price = atof(priceStr);
+		} while (!Common_isDoubleString(priceStr) && priceStr[0] != ESCAPE_CHAR);
+
+		if (priceStr[0] == ESCAPE_CHAR) {
+			printf("\n");
+			break;
+		} else
+			price = atof(priceStr);
 
 		do {
-			printf("Enter the quantity of item %d: ", i+1);
+			printf("Enter the quantity of item %d: ", i);
 			Common_getStringFromConsole(quantityStr);
 		} while (!Common_isIntegerString(quantityStr));
-		inputData[i].quantity = atoi(quantityStr);
+		quantity = atoi(quantityStr);
+
+		SelfCheckout_accumulateEachItem(price, quantity);
 	}
+
+	return SelfCheckout_getAccumulatedResults();
 }

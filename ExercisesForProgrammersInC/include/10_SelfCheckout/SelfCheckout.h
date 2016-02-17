@@ -24,5 +24,8 @@ void SelfCheckout_create();
 CheckoutResults * SelfCheckout_calculate(CheckoutInputData inputData[], int items);
 char * SelfCheckout_calculateAndTextOutput(CheckoutInputData inputData[], int items);
 void SelfCheckout_inputItems(CheckoutInputData inputData[], int items);
-
+void SelfCheckout_accumulateEachItem(float price, int quantity);
+CheckoutResults * SelfCheckout_getAccumulatedResults();
+char * SelfCheckout_getTextOutput(CheckoutResults * resultsData);
+CheckoutResults * SelfCheckout_accumulateItemsByConcole();
 #endif /* INCLUDE_10_SELFCHECKOUT_SELFCHECKOUT_H_ */
