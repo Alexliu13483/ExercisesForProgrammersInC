@@ -8,7 +8,15 @@
 #ifndef INCLUDE_CURRENCYCONVERSION_H_
 #define INCLUDE_CURRENCYCONVERSION_H_
 
-void CurrencyConversion_create();
-double CurrencyConversion_convert(double dollar, double rate);
+typedef enum {
+	US,
+	EU,
+	TW,
+	USER_DEF
+} CountryCode;
 
+void CurrencyConversion_create();
+double CurrencyConversion_convertToUS_Dollars(double dollar, CountryCode country);
+void CurrencyConversion_updateConversionRate(CountryCode country, double rate);
+double CurrencyConversion_getConversionRate(CountryCode);
 #endif /* INCLUDE_CURRENCYCONVERSION_H_ */

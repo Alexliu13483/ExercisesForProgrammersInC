@@ -39,11 +39,28 @@ TEST_GROUP(CurrencyConversionTest)
 
 TEST(CurrencyConversionTest, ZeroDollar)
 {
-	DOUBLES_EQUAL(0, CurrencyConversion_convert(0, 0), 0.001);
+	DOUBLES_EQUAL(0, CurrencyConversion_convertToUS_Dollars(0, US), 0.001);
 }
 
 TEST(CurrencyConversionTest, Test81Dollars)
 {
-	DOUBLES_EQUAL(111.38, CurrencyConversion_convert(81.0, 137.51), 0.001);
+	DOUBLES_EQUAL(81.0, CurrencyConversion_convertToUS_Dollars(81.0, US), 0.001);
 }
 
+TEST(CurrencyConversionTest, TestUpdateConversionRate)
+{
+	CountryCode countryCode = EU;
+	double rate = 137.51;
+
+	CurrencyConversion_updateConversionRate(countryCode, rate);
+	DOUBLES_EQUAL(137.51, CurrencyConversion_getConversionRate(countryCode), 0.001);
+}
+
+TEST(CurrencyConversionTest, TestUpdateCurrencyRateByCountries)
+{
+	CountryCode countryCode = EU;
+	double rate = 137.51;
+
+	CurrencyConversion_updateConversionRate(countryCode, rate);
+	DOUBLES_EQUAL(1.38, CurrencyConversion_convertToUS_Dollars(1, countryCode), 0.001);
+}
