@@ -20,6 +20,13 @@ double ComputingInterest_calculateSimpleInterest(double principal, double intere
 	return round(principal * (1 + (interestRate/100.0) * time) * 100.0) / 100.0;
 }
 
+double ComputingInterest_calculateCompoundInterest(
+		double principal, double interestRate, int time, int numOfTime) {
+	if (!numOfTime)
+		return principal;
+	return round(principal * pow(1 + (interestRate/100.0) / numOfTime, time*numOfTime) * 100.0) / 100.0;
+}
+
 char * ComputingInterest_calInterestWithConsoleInput() {
 	char principalStr[20];
 	char interestStr[20];

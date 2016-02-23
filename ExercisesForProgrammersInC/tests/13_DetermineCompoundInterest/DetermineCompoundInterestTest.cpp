@@ -17,7 +17,7 @@
 
 extern "C"
 {
-//#include "<<MODULE_HEAD_FILE>>.h"
+#include "12_ComputingSimpleInterest/ComputingInterest.h"
 }
 
 #include "CppUTest/TestHarness.h"
@@ -27,7 +27,7 @@ TEST_GROUP(CompoundInterestTest)
 
     void setup()
     {
-    	
+    	ComputingInterest_create();
     }
 
     void teardown()
@@ -37,7 +37,12 @@ TEST_GROUP(CompoundInterestTest)
 
 };
 
-TEST(CompoundInterestTest, FirstTest)
+TEST(CompoundInterestTest, CompountCaseTest)
 {
-	FAIL("Start a initial test...");
+	DOUBLES_EQUAL(1938.84, ComputingInterest_calculateCompoundInterest(1500, 4.3, 6, 4), 0.001);
+}
+
+TEST(CompoundInterestTest, ZeroNumberOfTimeTest)
+{
+	DOUBLES_EQUAL(1500.0, ComputingInterest_calculateCompoundInterest(1500, 4.3, 6, 0), 0.001);
 }
