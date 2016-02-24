@@ -24,13 +24,18 @@ void Common_getStringFromConsole(char * str) {
 
 bool Common_isIntegerString(char * str) {
 	int length = strlen(str);
+	int i = 0;
 
 	if (!length)
 		return false;
 
-	for (int i=0; i < length; i++)
+	if (str[0] == '-' || str[0] == '+')
+		i++;
+
+	for (; i < length; i++)
 		if (!isdigit((int)str[i]))
 			return false;
+
 	return true;
 }
 

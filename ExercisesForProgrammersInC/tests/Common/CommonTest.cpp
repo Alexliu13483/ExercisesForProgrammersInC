@@ -16,6 +16,8 @@
 
 extern "C"
 {
+#include <stdio.h>
+#include <stdlib.h>
 #include "Common/Common.h"
 }
 
@@ -48,6 +50,21 @@ TEST(CommonTest, testIsIntegerString_Abnormal)
 	char str[] = "0ABC";
 
 	CHECK_FALSE(Common_isIntegerString(str));
+}
+
+TEST(CommonTest, testIsIntegerString_Negative)
+{
+	char str[] = "-1";
+
+	CHECK_TRUE(Common_isIntegerString(str));
+	//printf("%d\n", atoi(str));
+}
+
+TEST(CommonTest, testIsIntegerString_Positive)
+{
+	char str[] = "+1";
+
+	CHECK_TRUE(Common_isIntegerString(str));
 }
 
 TEST(CommonTest, testIsDoubleString_Normal)
