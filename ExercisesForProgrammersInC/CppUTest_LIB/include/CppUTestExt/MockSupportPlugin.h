@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -42,15 +34,15 @@
 class MockSupportPlugin : public TestPlugin
 {
 public:
-	MockSupportPlugin(const SimpleString& name = "MockSupportPLugin");
-	virtual ~MockSupportPlugin();
+    MockSupportPlugin(const SimpleString& name = "MockSupportPLugin");
+    virtual ~MockSupportPlugin();
 
-	virtual void preTestAction(Utest&, TestResult&);
-	virtual void postTestAction(Utest&, TestResult&);
+    virtual void preTestAction(UtestShell&, TestResult&) _override;
+    virtual void postTestAction(UtestShell&, TestResult&) _override;
 
-	virtual void installComparator(const SimpleString& name, MockNamedValueComparator& comparator);
+    virtual void installComparator(const SimpleString& name, MockNamedValueComparator& comparator);
 private:
-	MockNamedValueComparatorRepository repository_;
+    MockNamedValueComparatorRepository repository_;
 };
 
 #endif

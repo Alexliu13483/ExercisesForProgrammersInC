@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 
 /*
  * This file can be used to get extra debugging information about memory leaks in your production code.
@@ -27,63 +19,33 @@
  *
  */
 
-/* Warning for maintainers:
- * This macro code is duplicate from TestHarness.h. The reason for this is to make the two files
- * completely independent from each other. NewMacros file can be included in production code whereas
- * TestHarness.h is only included in test code.
- */
+#include "CppUTestConfig.h"
 
-#include <stdlib.h>
-
-#ifndef CPPUTEST_USE_MEM_LEAK_DETECTION
-#ifdef CPPUTEST_MEM_LEAK_DETECTION_DISABLED
-#define CPPUTEST_USE_MEM_LEAK_DETECTION 0
-#else
-#define CPPUTEST_USE_MEM_LEAK_DETECTION 1
-#endif
-#endif
-
-#if CPPUTEST_USE_MEM_LEAK_DETECTION
-
-#ifndef CPPUTEST_USE_STD_CPP_LIB
-#ifdef CPPUTEST_STD_CPP_LIB_DISABLED
-#define CPPUTEST_USE_STD_CPP_LIB 0
-#else
-#define CPPUTEST_USE_STD_CPP_LIB 1
-#endif
-#endif
+/* Make sure that mem leak detection is on and that this is being included from a C++ file */
+#if CPPUTEST_USE_MEM_LEAK_DETECTION && defined(__cplusplus)
 
 /* This #ifndef prevents <new> from being included twice and enables the file to be included anywhere */
 #ifndef CPPUTEST_USE_NEW_MACROS
 
-#if CPPUTEST_USE_STD_CPP_LIB
-	#include <new>
+    #if CPPUTEST_USE_STD_CPP_LIB
+        #include <new>
+        #include <memory>
+        #include <string>
+    #endif
 
-		void* operator new(size_t size, const char* file, int line) throw (std::bad_alloc);
-		void* operator new[](size_t size, const char* file, int line) throw (std::bad_alloc);
-		void* operator new(size_t size) throw(std::bad_alloc);
-		void* operator new[](size_t size) throw(std::bad_alloc);
+    void* operator new(size_t size, const char* file, int line) UT_THROW (std::bad_alloc);
+    void* operator new[](size_t size, const char* file, int line) UT_THROW (std::bad_alloc);
+    void* operator new(size_t size) UT_THROW(std::bad_alloc);
+    void* operator new[](size_t size) UT_THROW(std::bad_alloc);
 
-	#else
+    void operator delete(void* mem) UT_NOTHROW;
+    void operator delete[](void* mem) UT_NOTHROW;
+    void operator delete(void* mem, const char* file, int line) UT_NOTHROW;
+    void operator delete[](void* mem, const char* file, int line) UT_NOTHROW;
 
-		void* operator new(size_t size, const char* file, int line);
-		void* operator new[](size_t size, const char* file, int line);
-		void* operator new(size_t size);
-		void* operator new[](size_t size);
-	#endif
 #endif
-
 
 #define new new(__FILE__, __LINE__)
-
-#ifndef CPPUTEST_USE_NEW_MACROS
-	extern "C" {
-#endif
-		#include "MemoryLeakDetectorMallocMacros.h"
-#ifndef CPPUTEST_USE_NEW_MACROS
-	}
-#endif
-
 
 #define CPPUTEST_USE_NEW_MACROS 1
 

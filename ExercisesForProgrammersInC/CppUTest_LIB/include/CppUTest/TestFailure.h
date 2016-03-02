@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -35,8 +27,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// FAILURE.H
-//
 // Failure is a class which holds information for a specific
 // test failure. It can be overriden for more complex failure messages
 //
@@ -48,100 +38,116 @@
 
 #include "SimpleString.h"
 
-class Utest;
+class UtestShell;
 class TestOutput;
 
 class TestFailure
 {
 
 public:
-	TestFailure(Utest*, const char* fileName, int lineNumber,
-			const SimpleString& theMessage);
-	TestFailure(Utest*, const SimpleString& theMessage);
-	TestFailure(Utest*, const char* fileName, int lineNumber);
-	TestFailure(const TestFailure&);
-	virtual ~TestFailure();
+    TestFailure(UtestShell*, const char* fileName, int lineNumber,
+            const SimpleString& theMessage);
+    TestFailure(UtestShell*, const SimpleString& theMessage);
+    TestFailure(UtestShell*, const char* fileName, int lineNumber);
+    TestFailure(const TestFailure&);
+    virtual ~TestFailure();
 
-	virtual SimpleString getFileName() const;
-	virtual SimpleString getTestName() const;
-	virtual int getFailureLineNumber() const;
-	virtual SimpleString getMessage() const;
-	virtual SimpleString getTestFileName() const;
-	virtual int getTestLineNumber() const;
-	bool isOutsideTestFile() const;
-	bool isInHelperFunction() const;
+    virtual SimpleString getFileName() const;
+    virtual SimpleString getTestName() const;
+    virtual int getFailureLineNumber() const;
+    virtual SimpleString getMessage() const;
+    virtual SimpleString getTestFileName() const;
+    virtual int getTestLineNumber() const;
+    bool isOutsideTestFile() const;
+    bool isInHelperFunction() const;
 
 
 protected:
+    enum DifferenceFormat
+    {
+        DIFFERENCE_STRING, DIFFERENCE_BINARY
+    };
 
-	SimpleString createButWasString(const SimpleString& expected, const SimpleString& actual);
-	SimpleString createDifferenceAtPosString(const SimpleString& actual, int position);
+    SimpleString createButWasString(const SimpleString& expected, const SimpleString& actual);
+    SimpleString createDifferenceAtPosString(const SimpleString& actual, size_t position, DifferenceFormat format = DIFFERENCE_STRING);
 
-	SimpleString testName_;
-	SimpleString fileName_;
-	int lineNumber_;
-	SimpleString testFileName_;
-	int testLineNumber_;
-	SimpleString message_;
+    SimpleString testName_;
+    SimpleString fileName_;
+    int lineNumber_;
+    SimpleString testFileName_;
+    int testLineNumber_;
+    SimpleString message_;
 
-	TestFailure& operator=(const TestFailure&);
+    TestFailure& operator=(const TestFailure&);
 
 };
 
 class EqualsFailure: public TestFailure
 {
 public:
-	EqualsFailure(Utest*, const char* fileName, int lineNumber, const char* expected, const char* actual);
-	EqualsFailure(Utest*, const char* fileName, int lineNumber, const SimpleString& expected, const SimpleString& actual);
+    EqualsFailure(UtestShell*, const char* fileName, int lineNumber, const char* expected, const char* actual);
+    EqualsFailure(UtestShell*, const char* fileName, int lineNumber, const SimpleString& expected, const SimpleString& actual);
 };
 
 class DoublesEqualFailure: public TestFailure
 {
 public:
-	DoublesEqualFailure(Utest*, const char* fileName, int lineNumber, double expected, double actual, double threshold);
+    DoublesEqualFailure(UtestShell*, const char* fileName, int lineNumber, double expected, double actual, double threshold);
 };
 
 class CheckEqualFailure : public TestFailure
 {
 public:
-	CheckEqualFailure(Utest* test, const char* fileName, int lineNumber, const SimpleString& expected, const SimpleString& actual);
+    CheckEqualFailure(UtestShell* test, const char* fileName, int lineNumber, const SimpleString& expected, const SimpleString& actual);
 };
 
 class ContainsFailure: public TestFailure
 {
 public:
-	ContainsFailure(Utest*, const char* fileName, int lineNumber, const SimpleString& expected, const SimpleString& actual);
+    ContainsFailure(UtestShell*, const char* fileName, int lineNumber, const SimpleString& expected, const SimpleString& actual);
 
 };
 
 class CheckFailure : public TestFailure
 {
 public:
-	CheckFailure(Utest* test, const char* fileName, int lineNumber, const SimpleString& checkString, const SimpleString& conditionString);
+    CheckFailure(UtestShell* test, const char* fileName, int lineNumber, const SimpleString& checkString, const SimpleString& conditionString, const SimpleString& textString = "");
 };
 
 class FailFailure : public TestFailure
 {
 public:
-	FailFailure(Utest* test, const char* fileName, int lineNumber, const SimpleString& message);
+    FailFailure(UtestShell* test, const char* fileName, int lineNumber, const SimpleString& message);
 };
 
 class LongsEqualFailure : public TestFailure
 {
 public:
-	LongsEqualFailure(Utest* test, const char* fileName, int lineNumber, long expected, long actual);
+    LongsEqualFailure(UtestShell* test, const char* fileName, int lineNumber, long expected, long actual);
+};
+
+class UnsignedLongsEqualFailure : public TestFailure
+{
+public:
+    UnsignedLongsEqualFailure(UtestShell* test, const char* fileName, int lineNumber, unsigned long expected, unsigned long actual);
 };
 
 class StringEqualFailure : public TestFailure
 {
 public:
-	StringEqualFailure(Utest* test, const char* fileName, int lineNumber, const char* expected, const char* actual);
+    StringEqualFailure(UtestShell* test, const char* fileName, int lineNumber, const char* expected, const char* actual);
 };
 
 class StringEqualNoCaseFailure : public TestFailure
 {
 public:
-	StringEqualNoCaseFailure(Utest* test, const char* fileName, int lineNumber, const char* expected, const char* actual);
+    StringEqualNoCaseFailure(UtestShell* test, const char* fileName, int lineNumber, const char* expected, const char* actual);
+};
+
+class BinaryEqualFailure : public TestFailure
+{
+public:
+	BinaryEqualFailure(UtestShell* test, const char* fileName, int lineNumber, const unsigned char* expected, const unsigned char* actual, size_t size);
 };
 
 #endif

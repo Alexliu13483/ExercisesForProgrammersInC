@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -36,33 +28,32 @@
 #ifndef D_MemoryReportAllocator_h
 #define D_MemoryReportAllocator_h
 
-#include "CppUTest/MemoryLeakAllocator.h"
+#include "CppUTest/TestMemoryAllocator.h"
 
 class MemoryReportFormatter;
 
-class MemoryReportAllocator : public MemoryLeakAllocator
+class MemoryReportAllocator : public TestMemoryAllocator
 {
 protected:
-	TestResult* result_;
-	MemoryLeakAllocator* realAllocator_;
-	MemoryReportFormatter* formatter_;
+    TestResult* result_;
+    TestMemoryAllocator* realAllocator_;
+    MemoryReportFormatter* formatter_;
 public:
-	MemoryReportAllocator();
-	virtual ~MemoryReportAllocator();
+    MemoryReportAllocator();
+    virtual ~MemoryReportAllocator();
 
-	virtual void setFormatter(MemoryReportFormatter* formatter);
-	virtual void setTestResult(TestResult* result);
-	virtual void setRealAllocator(MemoryLeakAllocator* allocator);
+    virtual void setFormatter(MemoryReportFormatter* formatter);
+    virtual void setTestResult(TestResult* result);
+    virtual void setRealAllocator(TestMemoryAllocator* allocator);
 
-	virtual bool allocateMemoryLeakNodeSeparately();
-	virtual MemoryLeakAllocator* getRealAllocator();
+    virtual TestMemoryAllocator* getRealAllocator();
 
-	virtual char* alloc_memory(size_t size, const char* file, int line);
-	virtual void free_memory(char* memory, const char* file, int line);
+    virtual char* alloc_memory(size_t size, const char* file, int line) _override;
+    virtual void free_memory(char* memory, const char* file, int line) _override;
 
-	virtual const char* name();
-	virtual const char* alloc_name();
-	virtual const char* free_name();
+    virtual const char* name() _override;
+    virtual const char* alloc_name() _override;
+    virtual const char* free_name() _override;
 };
 
 #endif

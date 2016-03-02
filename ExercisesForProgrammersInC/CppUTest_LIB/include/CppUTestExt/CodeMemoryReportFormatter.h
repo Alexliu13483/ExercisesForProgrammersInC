@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -42,34 +34,34 @@ struct CodeReportingAllocationNode;
 class CodeMemoryReportFormatter : public MemoryReportFormatter
 {
 private:
-	CodeReportingAllocationNode* codeReportingList_;
-	MemoryLeakAllocator* internalAllocator_;
+    CodeReportingAllocationNode* codeReportingList_;
+    TestMemoryAllocator* internalAllocator_;
 
 public:
-    CodeMemoryReportFormatter(MemoryLeakAllocator* internalAllocator);
-	virtual ~CodeMemoryReportFormatter();
+    CodeMemoryReportFormatter(TestMemoryAllocator* internalAllocator);
+    virtual ~CodeMemoryReportFormatter();
 
-	virtual void report_testgroup_start(TestResult* result, Utest& test);
-	virtual void report_testgroup_end(TestResult* /*result*/, Utest& /*test*/){};
+    virtual void report_testgroup_start(TestResult* result, UtestShell& test) _override;
+    virtual void report_testgroup_end(TestResult* /*result*/, UtestShell& /*test*/) _override {} // LCOV_EXCL_LINE
 
-	virtual void report_test_start(TestResult* result, Utest& test);
-	virtual void report_test_end(TestResult* result, Utest& test);
+    virtual void report_test_start(TestResult* result, UtestShell& test) _override;
+    virtual void report_test_end(TestResult* result, UtestShell& test) _override;
 
-	virtual void report_alloc_memory(TestResult* result, MemoryLeakAllocator* allocator, size_t size, char* memory, const char* file, int line);
-	virtual void report_free_memory(TestResult* result, MemoryLeakAllocator* allocator, char* memory, const char* file, int line);
+    virtual void report_alloc_memory(TestResult* result, TestMemoryAllocator* allocator, size_t size, char* memory, const char* file, int line) _override;
+    virtual void report_free_memory(TestResult* result, TestMemoryAllocator* allocator, char* memory, const char* file, int line) _override;
 
 private:
 
-	void addNodeToList(const char* variableName, void* memory, CodeReportingAllocationNode* next);
-	CodeReportingAllocationNode* findNode(void* memory);
+    void addNodeToList(const char* variableName, void* memory, CodeReportingAllocationNode* next);
+    CodeReportingAllocationNode* findNode(void* memory);
     bool variableExists(const SimpleString& variableName);
     void clearReporting();
 
-    bool isNewAllocator(MemoryLeakAllocator* allocator);
-	SimpleString createVariableNameFromFileLineInfo(const char *file, int line);
+    bool isNewAllocator(TestMemoryAllocator* allocator);
+    SimpleString createVariableNameFromFileLineInfo(const char *file, int line);
 
-    SimpleString getAllocationString(MemoryLeakAllocator* allocator, const SimpleString& variableName, size_t size);
-    SimpleString getDeallocationString(MemoryLeakAllocator* allocator, const SimpleString& variableName, const char* file, int line);
+    SimpleString getAllocationString(TestMemoryAllocator* allocator, const SimpleString& variableName, size_t size);
+    SimpleString getDeallocationString(TestMemoryAllocator* allocator, const SimpleString& variableName, const char* file, int line);
 };
 
 #endif

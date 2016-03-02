@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -45,40 +37,42 @@ struct JUnitTestCaseResultNode;
 class JUnitTestOutput: public TestOutput
 {
 public:
-	JUnitTestOutput();
-	virtual ~JUnitTestOutput();
+    JUnitTestOutput();
+    virtual ~JUnitTestOutput();
 
-	virtual void printTestsStarted();
-	virtual void printTestsEnded(const TestResult& result);
-	virtual void printCurrentTestStarted(const Utest& test);
-	virtual void printCurrentTestEnded(const TestResult& res);
-	virtual void printCurrentGroupStarted(const Utest& test);
-	virtual void printCurrentGroupEnded(const TestResult& res);
+    virtual void printTestsStarted() _override;
+    virtual void printTestsEnded(const TestResult& result) _override;
+    virtual void printCurrentTestStarted(const UtestShell& test) _override;
+    virtual void printCurrentTestEnded(const TestResult& res) _override;
+    virtual void printCurrentGroupStarted(const UtestShell& test) _override;
+    virtual void printCurrentGroupEnded(const TestResult& res) _override;
 
-	virtual void verbose();
-	virtual void print(const char*);
-	virtual void print(long);
-	virtual void print(const TestFailure& failure);
-	virtual void printTestRun(int number, int total);
+    virtual void printBuffer(const char*) _override;
+    virtual void print(const char*) _override;
+    virtual void print(long) _override;
+    virtual void print(const TestFailure& failure) _override;
 
-	virtual void flush();
+    virtual void flush() _override;
+
+    virtual SimpleString createFileName(const SimpleString& group);
+    void setPackageName(const SimpleString &package);
 
 protected:
 
-	JUnitTestOutputImpl* impl_;
-	void resetTestGroupResult();
+    JUnitTestOutputImpl* impl_;
+    void resetTestGroupResult();
 
-	virtual void openFileForWrite(const SimpleString& fileName);
-	virtual void writeTestGroupToFile();
-	virtual void writeToFile(const SimpleString& buffer);
-	virtual void closeFile();
+    virtual void openFileForWrite(const SimpleString& fileName);
+    virtual void writeTestGroupToFile();
+    virtual void writeToFile(const SimpleString& buffer);
+    virtual void closeFile();
 
-	virtual void writeXmlHeader();
-	virtual void writeTestSuiteSummery();
-	virtual void writeProperties();
-	virtual void writeTestCases();
-	virtual void writeFailure(JUnitTestCaseResultNode* node);
-	virtual void writeFileEnding();
+    virtual void writeXmlHeader();
+    virtual void writeTestSuiteSummery();
+    virtual void writeProperties();
+    virtual void writeTestCases();
+    virtual void writeFailure(JUnitTestCaseResultNode* node);
+    virtual void writeFileEnding();
 
 };
 

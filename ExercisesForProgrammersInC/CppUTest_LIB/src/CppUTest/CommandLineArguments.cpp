@@ -30,116 +30,199 @@
 #include "CppUTest/PlatformSpecificFunctions.h"
 
 CommandLineArguments::CommandLineArguments(int ac, const char** av) :
-	ac_(ac), av_(av), verbose_(false), repeat_(1), groupFilter_(""), nameFilter_(""), outputType_(OUTPUT_ECLIPSE)
+    ac_(ac), av_(av), verbose_(false), color_(false), runTestsAsSeperateProcess_(false), listTestGroupNames_(false), listTestGroupAndCaseNames_(false), repeat_(1), groupFilters_(NULL), nameFilters_(NULL), outputType_(OUTPUT_ECLIPSE)
 {
 }
 
 CommandLineArguments::~CommandLineArguments()
 {
+    while(groupFilters_) {
+        TestFilter* current = groupFilters_;
+        groupFilters_ = groupFilters_->getNext();
+        delete current;
+    }
+    while(nameFilters_) {
+        TestFilter* current = nameFilters_;
+        nameFilters_ = nameFilters_->getNext();
+        delete current;
+    }
 }
 
 bool CommandLineArguments::parse(TestPlugin* plugin)
 {
-	bool correctParameters = true;
-	for (int i = 1; i < ac_; i++) {
-		SimpleString argument = av_[i];
-		if (argument == "-v") verbose_ = true;
-		else if (argument.startsWith("-r")) SetRepeatCount(ac_, av_, i);
-		else if (argument.startsWith("-g")) SetGroupFilter(ac_, av_, i);
-		else if (argument.startsWith("-n")) SetNameFilter(ac_, av_, i);
-		else if (argument.startsWith("-o")) correctParameters = SetOutputType(ac_, av_, i);
-		else if (argument.startsWith("-p")) correctParameters = plugin->parseAllArguments(ac_, av_, i);
-		else correctParameters = false;
+    bool correctParameters = true;
+    for (int i = 1; i < ac_; i++) {
+        SimpleString argument = av_[i];
+        
+        if      (argument == "-v") verbose_ = true;
+        else if (argument == "-c") color_ = true;
+        else if (argument == "-p") runTestsAsSeperateProcess_ = true;
+        else if (argument == "-lg") listTestGroupNames_ = true;
+        else if (argument == "-ln") listTestGroupAndCaseNames_ = true;
+        else if (argument.startsWith("-r")) SetRepeatCount(ac_, av_, i);
+        else if (argument.startsWith("-g")) AddGroupFilter(ac_, av_, i);
+        else if (argument.startsWith("-sg")) AddStrictGroupFilter(ac_, av_, i);
+        else if (argument.startsWith("-n")) AddNameFilter(ac_, av_, i);
+        else if (argument.startsWith("-sn")) AddStrictNameFilter(ac_, av_, i);
+        else if (argument.startsWith("TEST(")) AddTestToRunBasedOnVerboseOutput(ac_, av_, i, "TEST(");
+        else if (argument.startsWith("IGNORE_TEST(")) AddTestToRunBasedOnVerboseOutput(ac_, av_, i, "IGNORE_TEST(");
+        else if (argument.startsWith("-o")) correctParameters = SetOutputType(ac_, av_, i);
+        else if (argument.startsWith("-p")) correctParameters = plugin->parseAllArguments(ac_, av_, i);
+        else if (argument.startsWith("-k")) SetPackageName(ac_, av_, i);
+        else correctParameters = false;
 
-		if (correctParameters == false) {
-			return false;
-		}
-	}
-	return true;
+        if (correctParameters == false) {
+            return false;
+        }
+    }
+    return true;
 }
 
 const char* CommandLineArguments::usage() const
 {
-	return "usage [-v] [-r#] [-g groupName] [-n testName] [-o{normal, junit}]\n";
+    return "usage [-v] [-c] [-p] [-lg] [-ln] [-r#] [-g|sg groupName]... [-n|sn testName]... [\"TEST(groupName, testName)\"]... [-o{normal, junit}] [-k packageName]\n";
 }
 
 bool CommandLineArguments::isVerbose() const
 {
-	return verbose_;
+    return verbose_;
 }
+
+bool CommandLineArguments::isColor() const
+{
+    return color_;
+}
+
+bool CommandLineArguments::isListingTestGroupNames() const
+{
+    return listTestGroupNames_;
+}
+
+bool CommandLineArguments::isListingTestGroupAndCaseNames() const
+{
+    return listTestGroupAndCaseNames_;
+}
+
+bool CommandLineArguments::runTestsInSeperateProcess() const
+{
+    return runTestsAsSeperateProcess_;
+}
+
 
 int CommandLineArguments::getRepeatCount() const
 {
-	return repeat_;
+    return repeat_;
 }
 
-SimpleString CommandLineArguments::getGroupFilter() const
+const TestFilter* CommandLineArguments::getGroupFilters() const
 {
-	return groupFilter_;
+    return groupFilters_;
 }
 
-SimpleString CommandLineArguments::getNameFilter() const
+const TestFilter* CommandLineArguments::getNameFilters() const
 {
-	return nameFilter_;
+    return nameFilters_;
 }
 
 void CommandLineArguments::SetRepeatCount(int ac, const char** av, int& i)
 {
-	repeat_ = 0;
+    repeat_ = 0;
 
-	SimpleString repeatParameter(av[i]);
-	if (repeatParameter.size() > 2) repeat_ = PlatformSpecificAtoI(av[i] + 2);
-	else if (i + 1 < ac) {
-		repeat_ = PlatformSpecificAtoI(av[i + 1]);
-		if (repeat_ != 0) i++;
-	}
+    SimpleString repeatParameter(av[i]);
+    if (repeatParameter.size() > 2) repeat_ = SimpleString::AtoI(av[i] + 2);
+    else if (i + 1 < ac) {
+        repeat_ = SimpleString::AtoI(av[i + 1]);
+        if (repeat_ != 0) i++;
+    }
 
-	if (0 == repeat_) repeat_ = 2;
+    if (0 == repeat_) repeat_ = 2;
 
 }
 
-SimpleString CommandLineArguments::getParameterField(int ac, const char** av, int& i)
+SimpleString CommandLineArguments::getParameterField(int ac, const char** av, int& i, const SimpleString& parameterName)
 {
-	SimpleString parameter(av[i]);
-	if (parameter.size() > 2) return av[i] + 2;
-	else if (i + 1 < ac) return av[++i];
-	return "";
+    size_t parameterLength = parameterName.size();
+    SimpleString parameter(av[i]);
+    if (parameter.size() >  parameterLength) return av[i] + parameterLength;
+    else if (i + 1 < ac) return av[++i];
+    return "";
 }
 
-void CommandLineArguments::SetGroupFilter(int ac, const char** av, int& i)
+void CommandLineArguments::AddGroupFilter(int ac, const char** av, int& i)
 {
-	SimpleString gf = getParameterField(ac, av, i);
-	groupFilter_ = gf;
+    TestFilter* groupFilter = new TestFilter(getParameterField(ac, av, i, "-g"));
+    groupFilters_ = groupFilter->add(groupFilters_);
 }
 
-void CommandLineArguments::SetNameFilter(int ac, const char** av, int& i)
+void CommandLineArguments::AddStrictGroupFilter(int ac, const char** av, int& i)
 {
-	nameFilter_ = getParameterField(ac, av, i);
+    TestFilter* groupFilter = new TestFilter(getParameterField(ac, av, i, "-sg"));
+    groupFilter->strictMatching();
+    groupFilters_ = groupFilter->add(groupFilters_);
+}
+
+void CommandLineArguments::AddNameFilter(int ac, const char** av, int& i)
+{
+    TestFilter* nameFilter = new TestFilter(getParameterField(ac, av, i, "-n"));
+    nameFilters_ = nameFilter->add(nameFilters_);
+}
+
+void CommandLineArguments::AddStrictNameFilter(int ac, const char** av, int& index)
+{
+    TestFilter* nameFilter = new TestFilter(getParameterField(ac, av, index, "-sn"));
+    nameFilter->strictMatching();
+    nameFilters_= nameFilter->add(nameFilters_);
+}
+
+void CommandLineArguments::AddTestToRunBasedOnVerboseOutput(int ac, const char** av, int& index, const char* parameterName)
+{
+    SimpleString wholename = getParameterField(ac, av, index, parameterName);
+    SimpleString testname = wholename.subStringFromTill(',', ')');
+    testname = testname.subString(2, testname.size());
+    TestFilter* namefilter = new TestFilter(testname);
+    TestFilter* groupfilter = new TestFilter(wholename.subStringFromTill(wholename.at(0), ','));
+    namefilter->strictMatching();
+    groupfilter->strictMatching();
+    groupFilters_ = groupfilter->add(groupFilters_);
+    nameFilters_ = namefilter->add(nameFilters_);
+}
+
+void CommandLineArguments::SetPackageName(int ac, const char** av, int& i)
+{
+    SimpleString packageName = getParameterField(ac, av, i, "-k");
+    if (packageName.size() == 0) return;
+
+    packageName_ = packageName;
 }
 
 bool CommandLineArguments::SetOutputType(int ac, const char** av, int& i)
 {
-	SimpleString outputType = getParameterField(ac, av, i);
-	if (outputType.size() == 0) return false;
+    SimpleString outputType = getParameterField(ac, av, i, "-o");
+    if (outputType.size() == 0) return false;
 
-	if (outputType == "normal" || outputType == "eclipse") {
-		outputType_ = OUTPUT_ECLIPSE;
-		return true;
-	}
-	if (outputType == "junit") {
-		outputType_ = OUTPUT_JUNIT;
-		return true;
-	}
-	return false;
+    if (outputType == "normal" || outputType == "eclipse") {
+        outputType_ = OUTPUT_ECLIPSE;
+        return true;
+    }
+    if (outputType == "junit") {
+        outputType_ = OUTPUT_JUNIT;
+        return true;
+    }
+    return false;
 }
 
 bool CommandLineArguments::isEclipseOutput() const
 {
-	return outputType_ == OUTPUT_ECLIPSE;
+    return outputType_ == OUTPUT_ECLIPSE;
 }
 
 bool CommandLineArguments::isJUnitOutput() const
 {
-	return outputType_ == OUTPUT_JUNIT;
+    return outputType_ == OUTPUT_JUNIT;
+}
+
+const SimpleString& CommandLineArguments::getPackageName() const
+{
+    return packageName_;
 }
 

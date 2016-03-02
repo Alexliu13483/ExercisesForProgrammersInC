@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 
 /*
  * This file can be used to get extra debugging information about memory leaks in your production code.
@@ -17,34 +9,28 @@
  *
  */
 
-/* Warning for maintainers:
- * This macro code is duplicate from TestHarness.h. The reason for this is to make the two files
- * completely independent from each other. NewMacros file can be included in production code whereas
- * TestHarness.h is only included in test code.
- */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef CPPUTEST_USE_MEM_LEAK_DETECTION
-#ifdef CPPUTEST_MEM_LEAK_DETECTION_DISABLED
-#define CPPUTEST_USE_MEM_LEAK_DETECTION 0
-#else
-#define CPPUTEST_USE_MEM_LEAK_DETECTION 1
-#endif
-#endif
+#include "CppUTestConfig.h"
 
 #if CPPUTEST_USE_MEM_LEAK_DETECTION
 
 /* This prevents the declaration from done twice and makes sure the file only #defines malloc, so it can be included anywhere */
 #ifndef CPPUTEST_USE_MALLOC_MACROS
 
-#include <stdlib.h>
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 extern void* cpputest_malloc_location(size_t size, const char* file, int line);
 extern void* cpputest_calloc_location(size_t count, size_t size, const char* file, int line);
-extern void* cpputest_ralloc_location(void *, size_t, const char* file, int line);
+extern void* cpputest_realloc_location(void *, size_t, const char* file, int line);
 extern void cpputest_free_location(void* buffer, const char* file, int line);
+
+#ifdef __cplusplus
+}
+#endif
+
+extern void crash_on_allocation_number(unsigned number);
 
 #endif
 
@@ -67,8 +53,4 @@ extern void cpputest_free_location(void* buffer, const char* file, int line);
 #define free(a) cpputest_free_location(a, __FILE__, __LINE__)
 
 #define CPPUTEST_USE_MALLOC_MACROS 1
-#endif
-
-#ifdef __cplusplus
-} /* extern "C" */
 #endif

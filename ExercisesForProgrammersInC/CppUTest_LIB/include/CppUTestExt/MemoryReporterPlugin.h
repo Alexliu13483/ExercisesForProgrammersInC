@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -43,20 +35,20 @@ class MemoryReportFormatter;
 
 class MemoryReporterPlugin : public TestPlugin
 {
-	MemoryReportFormatter* formatter_;
+    MemoryReportFormatter* formatter_;
 
-	MemoryReportAllocator mallocAllocator;
-	MemoryReportAllocator newAllocator;
-	MemoryReportAllocator newArrayAllocator;
+    MemoryReportAllocator mallocAllocator;
+    MemoryReportAllocator newAllocator;
+    MemoryReportAllocator newArrayAllocator;
 
-	SimpleString currentTestGroup_;
+    SimpleString currentTestGroup_;
 public:
     MemoryReporterPlugin();
     virtual ~MemoryReporterPlugin();
 
-    virtual void preTestAction(Utest & test, TestResult & result);
-    virtual void postTestAction(Utest & test, TestResult & result);
-    virtual bool parseArguments(int, const char**, int);
+    virtual void preTestAction(UtestShell & test, TestResult & result) _override;
+    virtual void postTestAction(UtestShell & test, TestResult & result) _override;
+    virtual bool parseArguments(int, const char**, int) _override;
 
 protected:
     virtual MemoryReportFormatter* createMemoryFormatter(const SimpleString& type);

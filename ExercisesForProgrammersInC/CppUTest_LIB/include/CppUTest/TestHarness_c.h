@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -35,16 +27,14 @@
 
 /******************************************************************************
  *
- * TESTHARNESS_c.H
- *
  * Provides an interface for when working with pure C
- *
- * Remember to use extern "C" when including in a cpp file!
  *
  *******************************************************************************/
 
 #ifndef D_TestHarness_c_h
 #define D_TestHarness_c_h
+
+#include "CppUTestConfig.h"
 
 #define CHECK_EQUAL_C_INT(expected,actual) \
   CHECK_EQUAL_C_INT_LOCATION(expected,actual,__FILE__,__LINE__)
@@ -67,22 +57,70 @@
 #define CHECK_C(condition) \
   CHECK_C_LOCATION(condition, #condition, __FILE__,__LINE__)
 
+
+/******************************************************************************
+ *
+ * TEST macros for in C.
+ *
+ *******************************************************************************/
+
+/* For use in C file */
+#define TEST_GROUP_C_SETUP(group_name) \
+    extern void group_##group_name##_setup_wrapper_c(void); \
+    void group_##group_name##_setup_wrapper_c()
+
+#define TEST_GROUP_C_TEARDOWN(group_name) \
+    extern void group_##group_name##_teardown_wrapper_c(void); \
+    void group_##group_name##_teardown_wrapper_c()
+
+#define TEST_C(group_name, test_name) \
+    extern void test_##group_name##_##test_name##_wrapper_c(void);\
+    void test_##group_name##_##test_name##_wrapper_c()
+
+
+/* For use in C++ file */
+
+#define TEST_GROUP_C_WRAPPER(group_name) \
+    extern "C" void group_##group_name##_setup_wrapper_c(void); \
+    extern "C" void group_##group_name##_teardown_wrapper_c(void); \
+    TEST_GROUP(group_name)
+
+#define TEST_GROUP_C_SETUP_WRAPPER(group_name) \
+    void setup() { \
+       group_##group_name##_setup_wrapper_c(); \
+    }
+
+#define TEST_GROUP_C_TEARDOWN_WRAPPER(group_name) \
+    void teardown() { \
+       group_##group_name##_teardown_wrapper_c(); \
+    }
+
+#define TEST_C_WRAPPER(group_name, test_name) \
+    extern "C" void test_##group_name##_##test_name##_wrapper_c(); \
+    TEST(group_name, test_name) { \
+        test_##group_name##_##test_name##_wrapper_c(); \
+    }
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
 /* CHECKS that can be used from C code */
 extern void CHECK_EQUAL_C_INT_LOCATION(int expected, int actual,
-		const char* fileName, int lineNumber);
+        const char* fileName, int lineNumber);
 extern void CHECK_EQUAL_C_REAL_LOCATION(double expected, double actual,
-		double threshold, const char* fileName, int lineNumber);
+        double threshold, const char* fileName, int lineNumber);
 extern void CHECK_EQUAL_C_CHAR_LOCATION(char expected, char actual,
-		const char* fileName, int lineNumber);
+        const char* fileName, int lineNumber);
 extern void CHECK_EQUAL_C_STRING_LOCATION(const char* expected,
-		const char* actual, const char* fileName, int lineNumber);
+        const char* actual, const char* fileName, int lineNumber);
 extern void FAIL_TEXT_C_LOCATION(const char* text, const char* fileName,
-		int lineNumber);
+        int lineNumber);
 extern void FAIL_C_LOCATION(const char* fileName, int lineNumber);
 extern void CHECK_C_LOCATION(int condition, const char* conditionString,
-		const char* fileName, int lineNumber);
-
-#include <stddef.h>
+        const char* fileName, int lineNumber);
 
 extern void* cpputest_malloc(size_t size);
 extern void* cpputest_calloc(size_t num, size_t size);
@@ -91,13 +129,21 @@ extern void  cpputest_free(void* buffer);
 
 extern void* cpputest_malloc_location(size_t size, const char* file, int line);
 extern void* cpputest_calloc_location(size_t num, size_t size,
-		const char* file, int line);
+        const char* file, int line);
 extern void* cpputest_realloc_location(void* memory, size_t size,
-		const char* file, int line);
+        const char* file, int line);
 extern void cpputest_free_location(void* buffer, const char* file, int line);
 
 void cpputest_malloc_set_out_of_memory(void);
 void cpputest_malloc_set_not_out_of_memory(void);
+void cpputest_malloc_set_out_of_memory_countdown(int);
+void cpputest_malloc_count_reset(void);
+int cpputest_malloc_get_count(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 /*
  * Small additional macro for unused arguments. This is common when stubbing, but in C you cannot remove the

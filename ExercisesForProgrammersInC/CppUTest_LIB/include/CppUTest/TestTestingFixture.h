@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -36,79 +28,109 @@
 #ifndef D_TestTestingFixture_H
 #define D_TestTestingFixture_H
 
+#include "TestRegistry.h"
+#include "TestOutput.h"
+
 class TestTestingFixture
 {
 public:
 
-	TestTestingFixture()
-	{
-		output_ = new StringBufferTestOutput();
-		result_ = new TestResult(*output_);
-		genTest_ = new ExecFunctionTest();
-		registry_ = new TestRegistry();
+    TestTestingFixture()
+    {
+        output_ = new StringBufferTestOutput();
+        result_ = new TestResult(*output_);
+        genTest_ = new ExecFunctionTestShell();
+        registry_ = new TestRegistry();
 
-		registry_->setCurrentRegistry(registry_);
-		registry_->addTest(genTest_);
-	}
-	;
+        registry_->setCurrentRegistry(registry_);
+        registry_->addTest(genTest_);
+    }
 
-	virtual ~TestTestingFixture()
-	{
-		registry_->setCurrentRegistry(0);
-		delete registry_;
-		delete result_;
-		delete output_;
-		delete genTest_;
-	}
+    virtual ~TestTestingFixture()
+    {
+        registry_->setCurrentRegistry(0);
+        delete registry_;
+        delete result_;
+        delete output_;
+        delete genTest_;
+    }
 
-	void setTestFunction(void(*testFunction)())
-	{
-		genTest_->testFunction_ = testFunction;
-	}
+    void addTest(UtestShell * test)
+    {
+        registry_->addTest(test);
+    }
 
-	void setSetup(void(*setupFunction)())
-	{
-		genTest_->setup_ = setupFunction;
-	}
+    void setTestFunction(void(*testFunction)())
+    {
+        genTest_->testFunction_ = testFunction;
+    }
 
-	void setTeardown(void(*teardownFunction)())
-	{
-		genTest_->teardown_ = teardownFunction;
-	}
+    void setSetup(void(*setupFunction)())
+    {
+        genTest_->setup_ = setupFunction;
+    }
 
-	void runAllTests()
-	{
-		registry_->runAllTests(*result_);
-	}
+    void setTeardown(void(*teardownFunction)())
+    {
+        genTest_->teardown_ = teardownFunction;
+    }
 
-	int getFailureCount()
-	{
-		return result_->getFailureCount();
-	}
+    void runAllTests()
+    {
+        registry_->runAllTests(*result_);
+    }
 
-	void assertPrintContains(const SimpleString& contains)
-	{
-		assertPrintContains(output_, contains);
-	}
+    int getFailureCount()
+    {
+        return result_->getFailureCount();
+    }
 
-	static void assertPrintContains(StringBufferTestOutput* output,
-			const SimpleString& contains)
-	{
-		if (output->getOutput().contains(contains)) return;
-		SimpleString message("\tActual <");
-		message += output->getOutput().asCharString();
-		message += ">\n";
-		message += "\tdid not contain <";
-		message += contains.asCharString();
-		message += ">\n";
-		FAIL(message.asCharString());
+    int getCheckCount()
+    {
+        return result_->getCheckCount();
+    }
 
-	}
+    int getIgnoreCount()
+    {
+        return result_->getIgnoredCount();
+    }
 
-	TestRegistry* registry_;
-	ExecFunctionTest* genTest_;
-	StringBufferTestOutput* output_;
-	TestResult * result_;
+    bool hasTestFailed()
+    {
+        return genTest_->hasFailed();
+    }
+
+
+    void assertPrintContains(const SimpleString& contains)
+    {
+        assertPrintContains(output_, contains);
+    }
+
+    static void assertPrintContains(StringBufferTestOutput* output,
+            const SimpleString& contains)
+    {
+        STRCMP_CONTAINS(contains.asCharString(), output->getOutput().asCharString());
+
+    }
+
+    TestRegistry* registry_;
+    ExecFunctionTestShell* genTest_;
+    StringBufferTestOutput* output_;
+    TestResult * result_;
+};
+
+class SetBooleanOnDestructorCall
+{
+    bool& booleanToSet_;
+public:
+    SetBooleanOnDestructorCall(bool& booleanToSet) : booleanToSet_(booleanToSet)
+    {
+    }
+
+    virtual ~SetBooleanOnDestructorCall()
+    {
+        booleanToSet_ = true;
+    }
 };
 
 #endif

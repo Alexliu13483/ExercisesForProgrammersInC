@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -36,45 +28,13 @@
 #ifndef D_TestHarness_h
 #define D_TestHarness_h
 
-/* Memory leak detector macros:
- *
- * CPPUTEST_USE_MEM_LEAK_DETECTION pr CPPUTEST_MEM_LEAK_DETECTION_DISABLED
- *   Controls the override of the global operator new/deleted and malloc/free.
- *   Without this, there will be no memory leak detection in C/C++.
- */
-#ifndef CPPUTEST_USE_MEM_LEAK_DETECTION
-#ifdef CPPUTEST_MEM_LEAK_DETECTION_DISABLED
-#define CPPUTEST_USE_MEM_LEAK_DETECTION 0
-#else
-#define CPPUTEST_USE_MEM_LEAK_DETECTION 1
-#endif
-#endif
-
-#ifndef CPPUTEST_USE_STD_CPP_LIB
-#ifdef CPPUTEST_STD_CPP_LIB_DISABLED
-#define CPPUTEST_USE_STD_CPP_LIB 0
-#else
-#define CPPUTEST_USE_STD_CPP_LIB 1
-#endif
-#endif
+#include "CppUTestConfig.h"
 
 /* original value was 9973 which works well with large programs. Now set to smaller since it takes
  * a lot of memory in embedded apps. Change it if you experience the memory leak detector to be slow.
  */
 
 #define MEMORY_LEAK_HASH_TABLE_SIZE 73
-
-/*
- * Lib C dependencies that are currently still left:
- *
- * stdarg.h -> We use formatting functions and va_list requires to include stdarg.h in SimpleString
- * stdlib.h -> The TestHarness_c.h includes this to try to avoid conflicts in its malloc #define. This dependency can
- * easily be removed by not enabling the MALLOC overrides.
- *
- * Lib C++ dependencies are all under the CPPUTEST_USE_STD_CPP_LIB.
- * The only dependency is to <new> which has the bad_alloc struct
- *
- */
 
 #include "Utest.h"
 #include "UtestMacros.h"

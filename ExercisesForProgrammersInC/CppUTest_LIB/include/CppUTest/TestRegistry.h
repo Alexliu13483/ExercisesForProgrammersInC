@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -35,60 +27,65 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// TESTREGISTRY.H
-//
 // TestRegistry is a collection of tests that can be run
 //
-///////////////////////////////////////////////////////////////////////////////
 
 #ifndef D_TestRegistry_h
 #define D_TestRegistry_h
 
 #include "SimpleString.h"
+#include "TestFilter.h"
 
-class Utest;
+class UtestShell;
 class TestResult;
 class TestPlugin;
 
 class TestRegistry
 {
 public:
-	TestRegistry();
-	virtual ~TestRegistry();
+    TestRegistry();
+    virtual ~TestRegistry();
 
-	virtual void addTest(Utest *test);
-	virtual void unDoLastAddTest();
-	virtual int countTests();
-	virtual void runAllTests(TestResult& result);
-	virtual void nameFilter(SimpleString);
-	virtual void groupFilter(SimpleString);
+    virtual void addTest(UtestShell *test);
+    virtual void unDoLastAddTest();
+    virtual int countTests();
+    virtual void runAllTests(TestResult& result);
+    virtual void listTestGroupNames(TestResult& result);
+    virtual void listTestGroupAndCaseNames(TestResult& result);
+    virtual void setNameFilters(const TestFilter* filters);
+    virtual void setGroupFilters(const TestFilter* filters);
 
-	virtual void installPlugin(TestPlugin* plugin);
-	virtual void resetPlugins();
-	virtual TestPlugin* getFirstPlugin();
-	virtual TestPlugin* getPluginByName(const SimpleString& name);
-	virtual void removePluginByName(const SimpleString& name);
+    virtual void installPlugin(TestPlugin* plugin);
+    virtual void resetPlugins();
+    virtual TestPlugin* getFirstPlugin();
+    virtual TestPlugin* getPluginByName(const SimpleString& name);
+    virtual void removePluginByName(const SimpleString& name);
+    virtual int countPlugins();
 
-	SimpleString getGroupFilter();
-	SimpleString getNameFilter();
+    virtual UtestShell* getFirstTest();
+    virtual UtestShell* getTestWithNext(UtestShell* test);
 
-	virtual Utest* getFirstTest();
-	virtual Utest* getLastTest();
-	virtual Utest* getTestWithNext(Utest* test);
+    virtual UtestShell* findTestWithName(const SimpleString& name);
+    virtual UtestShell* findTestWithGroup(const SimpleString& name);
 
-	static TestRegistry* getCurrentRegistry();
-	virtual void setCurrentRegistry(TestRegistry* registry);
-	void cleanup();
+    static TestRegistry* getCurrentRegistry();
+    virtual void setCurrentRegistry(TestRegistry* registry);
+
+    virtual void setRunTestsInSeperateProcess();
+    int getCurrentRepetition();
+
 private:
 
-	bool testShouldRun(Utest* test, TestResult& result);
-	bool endOfGroup(Utest* test);
+    bool testShouldRun(UtestShell* test, TestResult& result);
+    bool endOfGroup(UtestShell* test);
 
-	Utest * tests_;
-	SimpleString* nameFilter_;
-	SimpleString* groupFilter_;
-	TestPlugin* firstPlugin_;
-	static TestRegistry* currentRegistry_;
+    UtestShell * tests_;
+    const TestFilter* nameFilters_;
+    const TestFilter* groupFilters_;
+    TestPlugin* firstPlugin_;
+    static TestRegistry* currentRegistry_;
+    bool runInSeperateProcess_;
+    int currentRepetition_;
 
 };
 

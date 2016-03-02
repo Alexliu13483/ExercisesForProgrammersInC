@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -37,37 +29,37 @@
 #define D_MemoryReportFormatter_h
 
 class TestOutput;
-class Utest;
+class UtestShell;
 
 class MemoryReportFormatter
 {
 public:
-	virtual ~MemoryReportFormatter(){}
+    virtual ~MemoryReportFormatter(){}
 
-	virtual void report_testgroup_start(TestResult* result, Utest& test)=0;
-	virtual void report_testgroup_end(TestResult* result, Utest& test)=0;
+    virtual void report_testgroup_start(TestResult* result, UtestShell& test)=0;
+    virtual void report_testgroup_end(TestResult* result, UtestShell& test)=0;
 
-	virtual void report_test_start(TestResult* result, Utest& test)=0;
-	virtual void report_test_end(TestResult* result, Utest& test)=0;
+    virtual void report_test_start(TestResult* result, UtestShell& test)=0;
+    virtual void report_test_end(TestResult* result, UtestShell& test)=0;
 
-	virtual void report_alloc_memory(TestResult* result, MemoryLeakAllocator* allocator, size_t size, char* memory, const char* file, int line)=0;
-	virtual void report_free_memory(TestResult* result, MemoryLeakAllocator* allocator, char* memory, const char* file, int line)=0;
+    virtual void report_alloc_memory(TestResult* result, TestMemoryAllocator* allocator, size_t size, char* memory, const char* file, int line)=0;
+    virtual void report_free_memory(TestResult* result, TestMemoryAllocator* allocator, char* memory, const char* file, int line)=0;
 };
 
 class NormalMemoryReportFormatter : public MemoryReportFormatter
 {
 public:
-	NormalMemoryReportFormatter();
-	virtual ~NormalMemoryReportFormatter();
+    NormalMemoryReportFormatter();
+    virtual ~NormalMemoryReportFormatter();
 
-	virtual void report_testgroup_start(TestResult* /*result*/, Utest& /*test*/);
-	virtual void report_testgroup_end(TestResult* /*result*/, Utest& /*test*/){};
+    virtual void report_testgroup_start(TestResult* /*result*/, UtestShell& /*test*/) _override;
+    virtual void report_testgroup_end(TestResult* /*result*/, UtestShell& /*test*/) _override {} // LCOV_EXCL_LINE
 
-	virtual void report_test_start(TestResult* result, Utest& test);
-	virtual void report_test_end(TestResult* result, Utest& test);
+    virtual void report_test_start(TestResult* result, UtestShell& test) _override;
+    virtual void report_test_end(TestResult* result, UtestShell& test) _override;
 
-	virtual void report_alloc_memory(TestResult* result, MemoryLeakAllocator* allocator, size_t size, char* memory, const char* file, int line);
-	virtual void report_free_memory(TestResult* result, MemoryLeakAllocator* allocator, char* memory, const char* file, int line);
+    virtual void report_alloc_memory(TestResult* result, TestMemoryAllocator* allocator, size_t size, char* memory, const char* file, int line) _override;
+    virtual void report_free_memory(TestResult* result, TestMemoryAllocator* allocator, char* memory, const char* file, int line) _override;
 };
 
 #endif

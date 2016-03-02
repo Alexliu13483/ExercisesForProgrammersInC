@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -38,8 +30,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  TestOutput.h
-//
 //  This is a minimal printer inteface.
 //  We kept streams out too keep footprint small, and so the test
 //  harness could be used with less capable compilers so more
@@ -47,49 +37,61 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-class Utest;
+class UtestShell;
 class TestFailure;
 class TestResult;
 
 class TestOutput
 {
 public:
-	explicit TestOutput();
-	virtual ~TestOutput();
+    explicit TestOutput();
+    virtual ~TestOutput();
 
-	virtual void printTestsStarted();
-	virtual void printTestsEnded(const TestResult& result);
-	virtual void printCurrentTestStarted(const Utest& test);
-	virtual void printCurrentTestEnded(const TestResult& res);
-	virtual void printCurrentGroupStarted(const Utest& test);
-	virtual void printCurrentGroupEnded(const TestResult& res);
+    virtual void printTestsStarted();
+    virtual void printTestsEnded(const TestResult& result);
+    virtual void printCurrentTestStarted(const UtestShell& test);
+    virtual void printCurrentTestEnded(const TestResult& res);
+    virtual void printCurrentGroupStarted(const UtestShell& test);
+    virtual void printCurrentGroupEnded(const TestResult& res);
 
-	virtual void verbose();
-	virtual void print(const char*)=0;
-	virtual void print(long);
-	virtual void printDouble(double);
-	virtual void printHex(long);
-	virtual void print(const TestFailure& failure);
-	virtual void printTestRun(int number, int total);
-	virtual void setProgressIndicator(const char*);
+    virtual void verbose();
+    virtual void color();
+    virtual void printBuffer(const char*)=0;
+    virtual void print(const char*);
+    virtual void print(long);
+    virtual void printDouble(double);
+    virtual void print(const TestFailure& failure);
+    virtual void printTestRun(int number, int total);
+    virtual void setProgressIndicator(const char*);
 
-	virtual void flush();
+    virtual void flush()=0;
 
-private:
+    enum WorkingEnvironment {vistualStudio, eclipse, detectEnvironment};
 
-	virtual void printProgressIndicator();
-	void printFileAndLineForTestAndFailure(const TestFailure& failure);
-	void printFileAndLineForFailure(const TestFailure& failure);
-	void printFailureInTest(SimpleString testName);
-	void printFailureMessage(SimpleString reason);
-	void printEclipseErrorInFileOnLine(SimpleString testFile, int lineNumber);
+    static void setWorkingEnvironment(WorkingEnvironment workEnvironment);
+    static WorkingEnvironment getWorkingEnvironment();
 
-	TestOutput(const TestOutput&);
-	TestOutput& operator=(const TestOutput&);
+protected:
 
-	int dotCount_;
-	bool verbose_;
-	const char* progressIndication_;
+    virtual void printEclipseErrorInFileOnLine(SimpleString file, int lineNumber);
+    virtual void printVistualStudioErrorInFileOnLine(SimpleString file, int lineNumber);
+
+    virtual void printProgressIndicator();
+    void printFileAndLineForTestAndFailure(const TestFailure& failure);
+    void printFileAndLineForFailure(const TestFailure& failure);
+    void printFailureInTest(SimpleString testName);
+    void printFailureMessage(SimpleString reason);
+    void printErrorInFileOnLineFormattedForWorkingEnvironment(SimpleString testFile, int lineNumber);
+
+    TestOutput(const TestOutput&);
+    TestOutput& operator=(const TestOutput&);
+
+    int dotCount_;
+    bool verbose_;
+    bool color_;
+    const char* progressIndication_;
+
+    static WorkingEnvironment workingEnvironment_;
 };
 
 TestOutput& operator<<(TestOutput&, const char*);
@@ -106,21 +108,19 @@ TestOutput& operator<<(TestOutput&, long);
 class ConsoleTestOutput: public TestOutput
 {
 public:
-	explicit ConsoleTestOutput()
-	{
-	}
-	;
-	virtual ~ConsoleTestOutput()
-	{
-	}
-	;
+    explicit ConsoleTestOutput()
+    {
+    }
+    virtual ~ConsoleTestOutput()
+    {
+    }
 
-	virtual void print(const char* s);
-	virtual void flush();
+    virtual void printBuffer(const char* s) _override;
+    virtual void flush() _override;
 
 private:
-	ConsoleTestOutput(const ConsoleTestOutput&);
-	ConsoleTestOutput& operator=(const ConsoleTestOutput&);
+    ConsoleTestOutput(const ConsoleTestOutput&);
+    ConsoleTestOutput& operator=(const ConsoleTestOutput&);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -135,36 +135,71 @@ private:
 class StringBufferTestOutput: public TestOutput
 {
 public:
-	explicit StringBufferTestOutput()
-	{
-	}
-	;
-	virtual ~StringBufferTestOutput()
-	{
-	}
-	;
+    explicit StringBufferTestOutput()
+    {
+    }
 
-	void print(const char* s)
-	{
-		output += s;
-	}
+    virtual ~StringBufferTestOutput();
 
-	void flush()
-	{
-		output = "";
-	}
+    void printBuffer(const char* s) _override
+    {
+        output += s;
+    }
 
-	const SimpleString& getOutput()
-	{
-		return output;
-	}
+    void flush() _override
+    {
+        output = "";
+    }
+
+    const SimpleString& getOutput()
+    {
+        return output;
+    }
+
+protected:
+    SimpleString output;
 
 private:
-	SimpleString output;
-
-	StringBufferTestOutput(const StringBufferTestOutput&);
-	StringBufferTestOutput& operator=(const StringBufferTestOutput&);
+    StringBufferTestOutput(const StringBufferTestOutput&);
+    StringBufferTestOutput& operator=(const StringBufferTestOutput&);
 
 };
 
-#endif  // D_TestOutput_h
+class CompositeTestOutput : public TestOutput
+{
+public:
+    virtual void setOutputOne(TestOutput* output);
+    virtual void setOutputTwo(TestOutput* output);
+
+    CompositeTestOutput();
+    virtual ~CompositeTestOutput();
+
+    virtual void printTestsStarted();
+    virtual void printTestsEnded(const TestResult& result);
+
+    virtual void printCurrentTestStarted(const UtestShell& test);
+    virtual void printCurrentTestEnded(const TestResult& res);
+    virtual void printCurrentGroupStarted(const UtestShell& test);
+    virtual void printCurrentGroupEnded(const TestResult& res);
+
+    virtual void verbose();
+    virtual void color();
+    virtual void printBuffer(const char*);
+    virtual void print(const char*);
+    virtual void print(long);
+    virtual void printDouble(double);
+    virtual void print(const TestFailure& failure);
+    virtual void setProgressIndicator(const char*);
+
+    virtual void flush();
+
+protected:
+    CompositeTestOutput(const TestOutput&);
+    CompositeTestOutput& operator=(const TestOutput&);
+
+private:
+    TestOutput* outputOne_;
+    TestOutput* outputTwo_;
+};
+
+#endif

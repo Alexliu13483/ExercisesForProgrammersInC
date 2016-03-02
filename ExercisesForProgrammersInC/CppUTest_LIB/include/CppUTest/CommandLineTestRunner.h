@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -39,14 +31,9 @@
 #include "TestHarness.h"
 #include "TestOutput.h"
 #include "CommandLineArguments.h"
+#include "TestFilter.h"
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Main entry point for running a collection of unit tests
-//
-///////////////////////////////////////////////////////////////////////////////
-
-class JUnitTestOutput;
+class TestRegistry;
 
 #define DEF_PLUGIN_MEM_LEAK "MemoryLeakPlugin"
 #define DEF_PLUGIN_SET_POINTER "SetPointerPlugin"
@@ -54,30 +41,27 @@ class JUnitTestOutput;
 class CommandLineTestRunner
 {
 public:
-	enum OutputType
-	{
-		OUTPUT_NORMAL, OUTPUT_JUNIT
-	};
+    static int RunAllTests(int ac, const char** av);
+    static int RunAllTests(int ac, char** av);
 
-	static int RunAllTests(int ac, const char** av);
-	static int RunAllTests(int ac, char** av);
-	CommandLineTestRunner(int ac, const char** av, TestOutput*);
+    CommandLineTestRunner(int ac, const char** av, TestRegistry* registry);
+    virtual ~CommandLineTestRunner();
 
-	virtual ~CommandLineTestRunner();
-	int runAllTestsMain();
+    int runAllTestsMain();
 
+protected:
+    virtual TestOutput* createJUnitOutput(const SimpleString& packageName);
+    virtual TestOutput* createConsoleOutput();
+    virtual TestOutput* createCompositeOutput(TestOutput* outputOne, TestOutput* outputTwo);
+
+    TestOutput* output_;
 private:
-	TestOutput* output_;
-	JUnitTestOutput* jUnitOutput_;
-	CommandLineArguments* arguments_;
+    CommandLineArguments* arguments_;
+    TestRegistry* registry_;
 
-	bool parseArguments(TestPlugin*);
-	int runAllTests();
-	void initializeTestRun();
-	bool isVerbose();
-	int getRepeatCount();
-	SimpleString getGroupFilter();
-	SimpleString getNameFilter();
+    bool parseArguments(TestPlugin*);
+    int runAllTests();
+    void initializeTestRun();
 };
 
 #endif

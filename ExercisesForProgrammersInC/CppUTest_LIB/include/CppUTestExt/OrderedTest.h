@@ -1,11 +1,3 @@
-/***
- * Excerpted from "Test-Driven Development for Embedded C",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/jgade for more book information.
-***/
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -36,26 +28,26 @@
 #ifndef D_OrderedTest_h
 #define D_OrderedTest_h
 
-class OrderedTest : public Utest
+class OrderedTestShell : public UtestShell
 {
 public:
-   OrderedTest();
-   virtual ~OrderedTest();
+    OrderedTestShell();
+   virtual ~OrderedTestShell();
 
-   virtual OrderedTest* addOrderedTest(OrderedTest* test);
-   virtual OrderedTest* getNextOrderedTest();
+   virtual OrderedTestShell* addOrderedTest(OrderedTestShell* test);
+   virtual OrderedTestShell* getNextOrderedTest();
 
    int getLevel();
    void setLevel(int level);
 
-   static void addOrderedTestToHead(OrderedTest* test);
-   static OrderedTest* getOrderedTestHead();
+   static void addOrderedTestToHead(OrderedTestShell* test);
+   static OrderedTestShell* getOrderedTestHead();
    static bool firstOrderedTest();
 
-   static void setOrderedTestHead(OrderedTest* test);
+   static void setOrderedTestHead(OrderedTestShell* test);
 private:
-   static OrderedTest* _orderedTestsHead;
-   OrderedTest* _nextOrderedTest;
+   static OrderedTestShell* _orderedTestsHead;
+   OrderedTestShell* _nextOrderedTest;
 
    int _level;
 
@@ -64,21 +56,26 @@ private:
 class OrderedTestInstaller
 {
   public:
-    explicit OrderedTestInstaller(OrderedTest* test, const char* groupName, const char* testName, const char* fileName, int lineNumber, int level);
+    explicit OrderedTestInstaller(OrderedTestShell& test, const char* groupName, const char* testName, const char* fileName, int lineNumber, int level);
     virtual ~OrderedTestInstaller();
 
   private:
-     void addOrderedTestInOrder(OrderedTest* test);
-	void addOrderedTestInOrderNotAtHeadPosition(OrderedTest* test);
+     void addOrderedTestInOrder(OrderedTestShell* test);
+    void addOrderedTestInOrderNotAtHeadPosition(OrderedTestShell* test);
 
 };
 
 #define TEST_ORDERED(testGroup, testName, testLevel) \
+  /* declarations for compilers */ \
+  class TEST_##testGroup##_##testName##_TestShell; \
+  extern TEST_##testGroup##_##testName##_TestShell TEST_##testGroup##_##testName##_Instance; \
   class TEST_##testGroup##_##testName##_Test : public TEST_GROUP_##CppUTestGroup##testGroup \
 { public: TEST_##testGroup##_##testName##_Test () : TEST_GROUP_##CppUTestGroup##testGroup () {} \
-       void testBody(); } \
-    TEST_##testGroup##_##testName##_Instance; \
-  OrderedTestInstaller TEST_##testGroup##_##testName##_Installer(&TEST_##testGroup##_##testName##_Instance, #testGroup, #testName, __FILE__,__LINE__, testLevel); \
+       void testBody(); }; \
+  class TEST_##testGroup##_##testName##_TestShell : public OrderedTestShell { \
+       virtual Utest* createTest() _override { return new TEST_##testGroup##_##testName##_Test; } \
+  }  TEST_##testGroup##_##testName##_Instance; \
+  static OrderedTestInstaller TEST_##testGroup##_##testName##_Installer(TEST_##testGroup##_##testName##_Instance, #testGroup, #testName, __FILE__,__LINE__, testLevel); \
    void TEST_##testGroup##_##testName##_Test::testBody()
 
 #endif
