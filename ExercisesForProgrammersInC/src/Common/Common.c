@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
+#include <conio.h>
 
 void Common_getStringFromConsole(char * str) {
 	char c;
@@ -55,4 +56,17 @@ bool Common_isDoubleString(char * str) {
 			return false;
 	}
 	return true;
+}
+
+void Common_getStringFromConsoleAndNoEcho(char * str) {
+	char c;
+	int i = 0;
+
+	do {
+		c = (char)getch();
+		if(c == '\n' || c == '\r')
+			c = '\0';
+		str[i++] = c;
+		putchar('*');
+	} while (c != '\0');
 }

@@ -12,5 +12,6 @@
 void Common_getStringFromConsole(char * str);
 bool Common_isIntegerString(char * str);
 bool Common_isDoubleString(char * str);
+void Common_getStringFromConsoleAndNoEcho(char * str);
 
 #endif /* INCLUDE_COMMON_COMMON_H_ */
