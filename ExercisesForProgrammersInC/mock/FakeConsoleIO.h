@@ -10,7 +10,10 @@
 
 #include "Common/ConsoleIO.h"
 
+void FakeConsoleIO_create();
 int FakeConsoleIO_printf( const char * format, ... );
 char * FakeConsoleIO_getOutputString();
+int FakeConsoleIO_getchar();
+void FakeConsoleIO_setKeyInBuffer(char * InputKeyStrokes);
 
 #endif /* MOCK_FAKECONSOLEIO_H_ */

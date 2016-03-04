@@ -17,6 +17,8 @@
 
 extern "C"
 {
+#include <stdio.h>
+#include <string.h>
 #include "FakeConsoleIO.h"
 }
 
@@ -27,7 +29,9 @@ TEST_GROUP(testFakeConsoleIO)
 
     void setup()
     {
+    	FakeConsoleIO_create();
     	UT_PTR_SET(ConsoleIO_printf, FakeConsoleIO_printf);
+    	UT_PTR_SET(ConsoleIO_getchar, FakeConsoleIO_getchar);
     }
 
     void teardown()
@@ -43,3 +47,29 @@ TEST(testFakeConsoleIO, fakePrintfTest)
 	ConsoleIO_printf("%s", expect);
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
+
+TEST(testFakeConsoleIO, fakeGetcharTest)
+{
+	char expect[] = "TDD";
+	int expectLength = strlen(expect);
+
+	FakeConsoleIO_setKeyInBuffer(expect);
+	for (int i = 0; i < expectLength; i++)
+		ConsoleIO_getchar();
+	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
+}
+
+TEST(testFakeConsoleIO, fakePromptStringAndGetcharTest)
+{
+	char expect[] = "User name: Mary\n";
+	char promptStr[] = "User name: ";
+	char keyInName[] = "Mary\n";
+	int keyInNameLength = strlen(keyInName);
+	ConsoleIO_printf(promptStr);
+	FakeConsoleIO_setKeyInBuffer(keyInName);
+	for (int i = 0; i < keyInNameLength; i++)
+		ConsoleIO_getchar();
+	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
+}
+
+
