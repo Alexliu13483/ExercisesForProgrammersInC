@@ -10,5 +10,5 @@
 
 extern int (* ConsoleIO_printf) ( const char * format, ... );
 extern int (* ConsoleIO_getchar) ();
-
+extern int (* ConsoleIO_getch) ();
 #endif /* INCLUDE_COMMON_CONSOLEIO_H_ */

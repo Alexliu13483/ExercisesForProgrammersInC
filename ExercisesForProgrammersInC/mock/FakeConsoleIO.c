@@ -52,3 +52,7 @@ int FakeConsoleIO_getchar() {
 void FakeConsoleIO_setKeyInBuffer(char * InputKeyStrokes) {
 	strncpy(InputKeyStrokeBuffer, InputKeyStrokes, strlen(InputKeyStrokes));
 }
+
+int FakeConsoleIO_getch() {
+		return (int)InputKeyStrokeBuffer[currentInputIndex++];
+}

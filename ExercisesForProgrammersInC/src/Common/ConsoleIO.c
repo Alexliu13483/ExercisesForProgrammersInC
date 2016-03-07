@@ -7,6 +7,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <conio.h>
 
 int ConsoleIO_printfImplement( const char * format, ... ) {
 	char dest[1024 * 16];
@@ -19,3 +20,4 @@ int ConsoleIO_printfImplement( const char * format, ... ) {
 
 int (*ConsoleIO_printf) ( const char * format, ... ) = ConsoleIO_printfImplement;
 int (* ConsoleIO_getchar) () = getchar;
+int (* ConsoleIO_getch) () = getch;
