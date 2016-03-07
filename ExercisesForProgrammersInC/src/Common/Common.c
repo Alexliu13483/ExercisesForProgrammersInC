@@ -10,13 +10,14 @@
 #include <string.h>
 #include <ctype.h>
 #include <conio.h>
+#include "Common/ConsoleIO.h"
 
 void Common_getStringFromConsole(char * str) {
 	char c;
 	int i = 0;
 
 	do {
-		c = (char)getchar();
+		c = (char)ConsoleIO_getchar();
 		if(c == '\n' || c == '\r')
 			c = '\0';
 		str[i++] = c;
@@ -63,7 +64,7 @@ void Common_getStringFromConsoleAndNoEcho(char * str) {
 	int i = 0;
 
 	do {
-		c = (char)getch();
+		c = (char)ConsoleIO_getch();
 		if(c == '\n' || c == '\r')
 			c = '\0';
 		str[i++] = c;

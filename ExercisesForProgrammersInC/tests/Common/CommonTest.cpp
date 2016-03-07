@@ -19,6 +19,7 @@ extern "C"
 #include <stdio.h>
 #include <stdlib.h>
 #include "Common/Common.h"
+#include "FakeConsoleIO.h"
 }
 
 #include "CppUTest/TestHarness.h"
@@ -28,7 +29,9 @@ TEST_GROUP(CommonTest)
 
     void setup()
     {
-    	
+    	FakeConsoleIO_create();
+    	UT_PTR_SET(ConsoleIO_getchar, FakeConsoleIO_getchar);
+    	UT_PTR_SET(ConsoleIO_getch, FakeConsoleIO_getch);
     }
 
     void teardown()
@@ -88,3 +91,37 @@ TEST(CommonTest, testIsDoubleString_TwoDots)
 	CHECK_FALSE(Common_isDoubleString(str));
 }
 
+TEST(CommonTest, testGetStringFromConsoleWithNewline)
+{
+	char inputChars[] = "Mary\n";
+	char expect[] = "Mary";
+	char outputBuff[80] = "";
+
+	FakeConsoleIO_setKeyInBuffer(inputChars);
+	Common_getStringFromConsole(outputBuff);
+	STRCMP_EQUAL(expect, outputBuff);
+}
+
+TEST(CommonTest, testGetStringFromConsoleWithCarriageReturn)
+{
+	char inputChars[] = "Mary\r";
+	char expect[] = "Mary";
+	char outputBuff[80] = "";
+
+	FakeConsoleIO_setKeyInBuffer(inputChars);
+	Common_getStringFromConsole(outputBuff);
+	STRCMP_EQUAL(expect, outputBuff);
+	STRCMP_EQUAL(inputChars, FakeConsoleIO_getOutputString());
+}
+
+TEST(CommonTest, testGetStringFromConsoleWithCarriageReturnButNoEcho)
+{
+	char inputChars[] = "Mary\r";
+	char expect[] = "Mary";
+	char outputBuff[80] = "";
+
+	FakeConsoleIO_setKeyInBuffer(inputChars);
+	Common_getStringFromConsoleAndNoEcho(outputBuff);
+	STRCMP_EQUAL(expect, outputBuff);
+	STRCMP_EQUAL("", FakeConsoleIO_getOutputString());
+}
