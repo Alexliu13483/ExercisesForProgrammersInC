@@ -30,8 +30,10 @@ TEST_GROUP(CommonTest)
     void setup()
     {
     	FakeConsoleIO_create();
+    	UT_PTR_SET(ConsoleIO_printf, FakeConsoleIO_printf);
     	UT_PTR_SET(ConsoleIO_getchar, FakeConsoleIO_getchar);
     	UT_PTR_SET(ConsoleIO_getch, FakeConsoleIO_getch);
+    	UT_PTR_SET(ConsoleIO_putchar, FakeConsoleIO_putchar);
     }
 
     void teardown()
@@ -123,5 +125,5 @@ TEST(CommonTest, testGetStringFromConsoleWithCarriageReturnButNoEcho)
 	FakeConsoleIO_setKeyInBuffer(inputChars);
 	Common_getStringFromConsoleAndNoEcho(outputBuff);
 	STRCMP_EQUAL(expect, outputBuff);
-	STRCMP_EQUAL("", FakeConsoleIO_getOutputString());
+	STRCMP_EQUAL("****\n", FakeConsoleIO_getOutputString());
 }

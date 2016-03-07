@@ -16,5 +16,6 @@ char * FakeConsoleIO_getOutputString();
 int FakeConsoleIO_getchar();
 void FakeConsoleIO_setKeyInBuffer(char * InputKeyStrokes);
 int FakeConsoleIO_getch();
+int FakeConsoleIO_putchar(int);
 
 #endif /* MOCK_FAKECONSOLEIO_H_ */

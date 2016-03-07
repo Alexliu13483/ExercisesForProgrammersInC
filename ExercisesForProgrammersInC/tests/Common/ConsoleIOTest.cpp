@@ -33,6 +33,7 @@ TEST_GROUP(testFakeConsoleIO)
     	UT_PTR_SET(ConsoleIO_printf, FakeConsoleIO_printf);
     	UT_PTR_SET(ConsoleIO_getchar, FakeConsoleIO_getchar);
     	UT_PTR_SET(ConsoleIO_getch, FakeConsoleIO_getch);
+    	UT_PTR_SET(ConsoleIO_putchar, FakeConsoleIO_putchar);
     }
 
     void teardown()
@@ -86,4 +87,15 @@ TEST(testFakeConsoleIO, fakeGetchTest) // no-echo character input
 		keyinChars[i] = ConsoleIO_getch();
 	STRCMP_EQUAL(expectOutput, FakeConsoleIO_getOutputString());
 	STRCMP_EQUAL(expectKeyinChars, keyinChars);
+}
+
+TEST(testFakeConsoleIO, fakePutcharTest)
+{
+	char inputChars[] = "123456\r\n";
+	char expectOutput[] = "123456\r\n";
+	int expectLength = strlen(inputChars);
+
+	for (int i = 0; i < expectLength; i++)
+		ConsoleIO_putchar(inputChars[i]);
+	STRCMP_EQUAL(expectOutput, FakeConsoleIO_getOutputString());
 }

@@ -56,3 +56,9 @@ void FakeConsoleIO_setKeyInBuffer(char * InputKeyStrokes) {
 int FakeConsoleIO_getch() {
 		return (int)InputKeyStrokeBuffer[currentInputIndex++];
 }
+
+int FakeConsoleIO_putchar(int charData) {
+	outputString[currentOutputIndex] = charData;
+	return (int)outputString[currentOutputIndex++];
+
+}

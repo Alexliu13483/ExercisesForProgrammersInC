@@ -19,6 +19,8 @@ extern "C"
 {
 #include <stdio.h>
 #include "15_PasswordValidation/PasswordValidation.h"
+#include "Common/Common.h"
+#include "FakeConsoleIO.h"
 }
 
 #include "CppUTest/TestHarness.h"
@@ -28,6 +30,11 @@ TEST_GROUP(testPasswordValidation)
 
     void setup()
     {
+    	FakeConsoleIO_create();
+    	UT_PTR_SET(ConsoleIO_printf, FakeConsoleIO_printf);
+    	UT_PTR_SET(ConsoleIO_getchar, FakeConsoleIO_getchar);
+    	UT_PTR_SET(ConsoleIO_getch, FakeConsoleIO_getch);
+    	UT_PTR_SET(ConsoleIO_putchar, FakeConsoleIO_putchar);
     	PasswordValidation_create();
     }
 
@@ -64,20 +71,28 @@ TEST(testPasswordValidation, passwordIncorrectStringTest)
 	STRCMP_EQUAL(expectStr, PasswordValidation_checkAndReturnString(password));
 }
 
-IGNORE_TEST(testPasswordValidation, inputByConcoleTest)
+TEST(testPasswordValidation, inputByConcoleTest)
 {
 	char password[80];
 	char expectStr[] = "Welcome!";
+	char inputChars[] = "abc$123\n";
+	char expectOutputStr[] = "Enter password: abc$123\n";
 
-	printf("Enter password: ");
-	scanf("%s", password);
+	ConsoleIO_printf("Enter password: ");
+	FakeConsoleIO_setKeyInBuffer(inputChars);
+	Common_getStringFromConsole(password);
 	STRCMP_EQUAL(expectStr, PasswordValidation_checkAndReturnString(password));
+	STRCMP_EQUAL(expectOutputStr, FakeConsoleIO_getOutputString());
 }
 
-IGNORE_TEST(testPasswordValidation, inputByConcoleNoEchoTest)
+TEST(testPasswordValidation, inputByConcoleNoEchoTest)
 {
 	char expectStr[] = "Welcome!";
+	char inputChars[] = "abc$123\n";
+	char expectOutputStr[] = "\nEnter password: *******\n";
 
+	FakeConsoleIO_setKeyInBuffer(inputChars);
 	STRCMP_EQUAL(expectStr, PasswordValidation_getPasswordFromConsole());
+	STRCMP_EQUAL(expectOutputStr, FakeConsoleIO_getOutputString());
 }
 

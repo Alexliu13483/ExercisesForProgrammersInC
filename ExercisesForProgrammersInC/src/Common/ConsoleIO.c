@@ -21,3 +21,4 @@ int ConsoleIO_printfImplement( const char * format, ... ) {
 int (*ConsoleIO_printf) ( const char * format, ... ) = ConsoleIO_printfImplement;
 int (* ConsoleIO_getchar) () = getchar;
 int (* ConsoleIO_getch) () = getch;
+int (* ConsoleIO_putchar) (int) = putchar;

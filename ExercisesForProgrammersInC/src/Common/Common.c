@@ -68,6 +68,8 @@ void Common_getStringFromConsoleAndNoEcho(char * str) {
 		if(c == '\n' || c == '\r')
 			c = '\0';
 		str[i++] = c;
-		putchar('*');
+		if ( c != '\0' )
+			ConsoleIO_putchar('*');
 	} while (c != '\0');
+	ConsoleIO_putchar('\n');
 }

@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "Common/Common.h"
+#include "Common/ConsoleIO.h"
 
 const char thePassword[] = "abc$123";
 const char correctPassordSting[] = "Welcome!";
@@ -30,7 +31,7 @@ const char * PasswordValidation_checkAndReturnString(char * password) {
 }
 
 char * PasswordValidation_getPasswordFromConsole() {
-	printf("\nEnter passowrd: ");
+	ConsoleIO_printf("\nEnter password: ");
 	Common_getStringFromConsoleAndNoEcho(passwordString);
 	return (char *)PasswordValidation_checkAndReturnString(passwordString);
 }
