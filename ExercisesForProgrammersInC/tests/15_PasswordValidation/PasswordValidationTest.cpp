@@ -74,25 +74,33 @@ TEST(testPasswordValidation, passwordIncorrectStringTest)
 TEST(testPasswordValidation, inputByConcoleTest)
 {
 	char password[80];
-	char expectStr[] = "Welcome!";
 	char inputChars[] = "abc$123\n";
-	char expectOutputStr[] = "Enter password: abc$123\n";
+	char expectOutputStr[] = "Enter password: abc$123\nWelcome!";
 
 	ConsoleIO_printf("Enter password: ");
 	FakeConsoleIO_setKeyInBuffer(inputChars);
 	Common_getStringFromConsole(password);
-	STRCMP_EQUAL(expectStr, PasswordValidation_checkAndReturnString(password));
+	ConsoleIO_printf(PasswordValidation_checkAndReturnString(password));
 	STRCMP_EQUAL(expectOutputStr, FakeConsoleIO_getOutputString());
 }
 
 TEST(testPasswordValidation, inputByConcoleNoEchoTest)
 {
-	char expectStr[] = "Welcome!";
 	char inputChars[] = "abc$123\n";
-	char expectOutputStr[] = "\nEnter password: *******\n";
+	char expectOutputStr[] = "\nEnter password: *******\nWelcome!";
 
 	FakeConsoleIO_setKeyInBuffer(inputChars);
-	STRCMP_EQUAL(expectStr, PasswordValidation_getPasswordFromConsole());
+	ConsoleIO_printf(PasswordValidation_getPasswordFromConsole());
+	STRCMP_EQUAL(expectOutputStr, FakeConsoleIO_getOutputString());
+}
+
+TEST(testPasswordValidation, inputByConcoleNoEchoWithWrongPasswordTest)
+{
+	char inputChars[] = "1234567\n";
+	char expectOutputStr[] = "\nEnter password: *******\nI don't know you.";
+
+	FakeConsoleIO_setKeyInBuffer(inputChars);
+	ConsoleIO_printf(PasswordValidation_getPasswordFromConsole());
 	STRCMP_EQUAL(expectOutputStr, FakeConsoleIO_getOutputString());
 }
 
