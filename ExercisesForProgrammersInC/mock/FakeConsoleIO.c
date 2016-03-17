@@ -9,24 +9,28 @@
 #include <string.h>
 
 enum {	OUTPUT_STRING_SIZE = 80 * 25,
-		INPUT_KEY_BUFFER_SIZE = 100};
+		INPUT_KEY_BUFFER_SIZE = 256};
 
 static char outputString[OUTPUT_STRING_SIZE];
 static int currentOutputIndex;
 static char InputKeyStrokeBuffer[INPUT_KEY_BUFFER_SIZE];
 static int currentInputIndex;
+static int currentSetInputIndex;
+
 
 
 void FakeConsoleIO_create() {
 	currentOutputIndex = 0;
 	currentInputIndex = 0;
+	currentSetInputIndex = 0;
+	InputKeyStrokeBuffer[0] = '\0';
 	for (int i = 0; i < OUTPUT_STRING_SIZE; i++) {
 		outputString[i] = 0;
 	}
 }
 
 int FakeConsoleIO_printf( const char * format, ... ) {
-	char buffer[100];
+	char buffer[OUTPUT_STRING_SIZE];
 	int strLength;
 
 	va_list argptr;
@@ -50,7 +54,7 @@ int FakeConsoleIO_getchar() {
 }
 
 void FakeConsoleIO_setKeyInBuffer(char * InputKeyStrokes) {
-	strncpy(InputKeyStrokeBuffer, InputKeyStrokes, strlen(InputKeyStrokes));
+	strcat(InputKeyStrokeBuffer, InputKeyStrokes);
 }
 
 int FakeConsoleIO_getch() {
