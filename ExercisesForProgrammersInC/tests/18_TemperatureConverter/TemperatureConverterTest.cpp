@@ -50,8 +50,8 @@ TEST(TemperatureConverterTest, CtoF)
 			"Your choice: C\n\n"
 			"Please enter the temperature in Fahrenheit: 32\n"
 			"The temperature in Celsius is 0.\n";
-	char inputDataData1[] = "C\n";
-	char inputDataData2[] = "0\n";
+	char inputDataData1[] = "C";
+	char inputDataData2[] = "32\n";
 
 	FakeConsoleIO_setKeyInBuffer(inputDataData1);
 	FakeConsoleIO_setKeyInBuffer(inputDataData2);
@@ -66,8 +66,8 @@ TEST(TemperatureConverterTest, FtoC)
 			"Your choice: F\n\n"
 			"Please enter the temperature in Celsius: 0\n"
 			"The temperature in Fahrenheit is 32.\n";
-	char inputDataData1[] = "F\n";
-	char inputDataData2[] = "32\n";
+	char inputDataData1[] = "F";
+	char inputDataData2[] = "0\n";
 
 	FakeConsoleIO_setKeyInBuffer(inputDataData1);
 	FakeConsoleIO_setKeyInBuffer(inputDataData2);
