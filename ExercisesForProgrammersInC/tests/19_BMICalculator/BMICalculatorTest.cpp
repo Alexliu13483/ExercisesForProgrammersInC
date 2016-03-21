@@ -72,3 +72,17 @@ TEST(BMICalculatorTest, BMI_OverStandardRange)
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
 
+TEST(BMICalculatorTest, BMI_UnderStandardRange)
+{
+	char expect[] = "Enter your weight (Kg): 50\n"
+			"Enter your height (cm): 180\n"
+			"Your BMI is 15.4.\nYou are underweight. You should see your doctor.\n";
+	char input1[] = "50\n";
+	char input2[] = "180\n";
+
+	FakeConsoleIO_setKeyInBuffer(input1);
+	FakeConsoleIO_setKeyInBuffer(input2);
+	BMICalculator_run();
+	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
+}
+
