@@ -10,6 +10,12 @@
 
 #include "Common/ConsoleIO.h"
 
+#define INIT_FAKE_CONSOLE()		    	FakeConsoleIO_create();\
+										UT_PTR_SET(ConsoleIO_printf, FakeConsoleIO_printf);\
+										UT_PTR_SET(ConsoleIO_getchar, FakeConsoleIO_getchar);\
+										UT_PTR_SET(ConsoleIO_getch, FakeConsoleIO_getch);\
+										UT_PTR_SET(ConsoleIO_putchar, FakeConsoleIO_putchar)
+
 void FakeConsoleIO_create();
 int FakeConsoleIO_printf( const char * format, ... );
 char * FakeConsoleIO_getOutputString();
