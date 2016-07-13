@@ -39,17 +39,34 @@ TEST_GROUP(Validating_InputsTest)
 
 };
 
-TEST(Validating_InputsTest, FirstTest)
+TEST(Validating_InputsTest, FirstExampleTest)
 {
 	char expect[] =
 			"Enter the first name: J\n"
 			"Enter the last name: \n"
 			"Enter the ZIP code: ABCDE\n"
-			"Enter an employee ID:  A12-1234\n"
+			"Enter an employee ID: A12-1234\n"
 			"\"J\" is not a valid first name. It is too short.\n"
 			"The last name must be filled in.\n"
-			"The ZIP code must be numeric.\n";
+			"The ZIP code must be numeric.\n"
+			"A12-1234 is not a valid ID.\n";
 	char input[] = "J\n\nABCDE\nA12-1234\n";
+
+	FakeConsoleIO_setKeyInBuffer(input);
+
+	ValidateInput_run();
+	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
+}
+
+TEST(Validating_InputsTest, SecondExampleTest)
+{
+	char expect[] =
+			"Enter the first name: Jimmy\n"
+			"Enter the last name: James\n"
+			"Enter the ZIP code: 55555\n"
+			"Enter an employee ID: TK-421\n"
+			"There were no errors found.\n";
+	char input[] = "Jimmy\nJames\n55555\nTK-421\n";
 
 	FakeConsoleIO_setKeyInBuffer(input);
 
