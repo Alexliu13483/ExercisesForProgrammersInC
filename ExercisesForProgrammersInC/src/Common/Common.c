@@ -10,7 +10,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <conio.h>
+#include <stdlib.h>
 #include "Common/ConsoleIO.h"
+
+int (* Common_rand) () = rand;
 
 void Common_getStringFromConsole(char * str) {
 	char c;
@@ -73,3 +76,4 @@ void Common_getStringFromConsoleAndNoEcho(char * str) {
 	} while (c != '\0');
 	ConsoleIO_putchar('\n');
 }
+
