@@ -38,13 +38,13 @@ TEST_GROUP(RetirementCalculatorTest)
 
 TEST(RetirementCalculatorTest, testRetirement25_65)
 {
-	char expect[] = "You have 40 years left until you can retire.\nIt's 2016, so you can retire in 2056.";
+	char expect[] = "You have 40 years left until you can retire.\nIt's 2017, so you can retire in 2057.";
 	STRCMP_EQUAL(expect, RetirementCalculator_calculate(25, 65));
 }
 
 IGNORE_TEST(RetirementCalculatorTest, testInputFromConsole)
 {
-	char expect[] = "You have 40 years left until you can retire.\nIt's 2016, so you can retire in 2056.";
+	char expect[] = "You have 40 years left until you can retire.\nIt's 2017, so you can retire in 2057.";
 	RetirementCalculator_calculateInputFromConsole();
 	STRCMP_EQUAL(expect, RetirementCalculator_getOutputString());
 }
