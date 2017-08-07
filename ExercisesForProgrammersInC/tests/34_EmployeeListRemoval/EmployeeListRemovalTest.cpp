@@ -28,12 +28,12 @@ char name2[] = "Jackie Jackson";
 char name3[] = "Chris Jones";
 char name4[] = "Amanda Cullen";
 char name5[] = "Jeremy Goodwin";
-char name6[] = "";
 
 
 TEST_GROUP(EmployeeListRemovalTest)
 {
-	char * nameList[6];
+	char * namearray[5];
+	NameList nameList;
 
     void setup()
     {
@@ -49,12 +49,13 @@ TEST_GROUP(EmployeeListRemovalTest)
 
     void prepareTestData() {
 
-    	nameList[0] = name1;
-    	nameList[1] = name2;
-    	nameList[2] = name3;
-    	nameList[3] = name4;
-    	nameList[4] = name5;
-    	nameList[5] = name6;
+    	namearray[0] = name1;
+    	namearray[1] = name2;
+    	namearray[2] = name3;
+    	namearray[3] = name4;
+    	namearray[4] = name5;
+    	nameList.names = namearray;
+    	nameList.num = 5;
     }
 
 };
@@ -67,7 +68,7 @@ TEST(EmployeeListRemovalTest, promptTest)
 	char input[] = "\n";
 
 	FakeConsoleIO_setKeyInBuffer(input);
-	EmployeeListRemoval_remove(nameList);
+	EmployeeListRemoval_remove(&nameList);
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
 
@@ -84,7 +85,7 @@ TEST(EmployeeListRemovalTest, remove_one)
 	char input[] = "Chris Jones\n";
 
 	FakeConsoleIO_setKeyInBuffer(input);
-	EmployeeListRemoval_remove(nameList);
+	EmployeeListRemoval_remove(&nameList);
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
 

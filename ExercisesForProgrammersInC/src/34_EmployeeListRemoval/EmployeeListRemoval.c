@@ -15,39 +15,36 @@ void EmployeeListRemoval_create() {
 
 }
 
-void EmployeeListRemoval_remove(char ** names) {
+static void printNames(NameList * namelist) {
+	for(int i = 0; i < namelist->num; i++)
+		if (namelist->names[i] != NULL)
+			ConsoleIO_printf("%s\n", namelist->names[i]);
+}
+
+void EmployeeListRemoval_remove(NameList * namelist) {
 	int numOfNames = 0;
 	char firstName[40];
 	int i = 0;
-	int removedNum = 0;
 
-	while (names[numOfNames][0] != '\0') {
-		numOfNames++;
-	}
+	numOfNames = namelist->num;
 
 	ConsoleIO_printf("There are %d employees:\n", numOfNames);
 
-	while (names[i][0] != '\0') {
-		ConsoleIO_printf("%s\n", names[i++]);
-	}
+	printNames(namelist);
 
 	ConsoleIO_printf("\nEnter an employee name to remove: ");
 	Common_getStringFromConsole(firstName);
 	if (firstName[0] == '\0')
 		return;
 	else {
-		for (i = 0; i < numOfNames; i++) {
-			if(strcmp(firstName, names[i]) == 0) {
-				names[i] = NULL;
-				removedNum++;
+		for (i = 0; i < namelist->num; i++) {
+			if(strcmp(firstName, namelist->names[i]) == 0) {
+				namelist->names[i] = NULL;
+				numOfNames--;
 			}
 		}
 
-		ConsoleIO_printf("\nThere are %d employees:\n", numOfNames - removedNum);
-		for (i = 0; i < numOfNames; i++) {
-			if (names[i] != NULL)
-				ConsoleIO_printf("%s\n", names[i]);
-		}
-
+		ConsoleIO_printf("\nThere are %d employees:\n", numOfNames);
+		printNames(namelist);
 	}
 }
