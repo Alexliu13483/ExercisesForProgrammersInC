@@ -89,3 +89,42 @@ TEST(EmployeeListRemovalTest, remove_one)
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
 
+TEST(EmployeeListRemovalTest, name_not_exist)
+{
+	char expect[] = "There are 5 employees:\nJohn Smith\n"
+					"Jackie Jackson\nChris Jones\nAmanda Cullen\n"
+					"Jeremy Goodwin\n\nEnter an employee name to remove: Wells Allen\n\n"
+					"Error! The name doesn\'t exist.\n";
+	char input[] = "Wells Allen\n";
+
+	FakeConsoleIO_setKeyInBuffer(input);
+	EmployeeListRemoval_remove(&nameList);
+	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
+}
+
+TEST(EmployeeListRemovalTest, name_list_in_file)
+{
+	char expect[] =	"John Smith\n"
+					"Jackie Jackson\n"
+					"Amanda Cullen\n"
+					"Jeremy Goodwin\n";
+	char input[] = "Chris Jones";
+	char testdata[] = "John Smith\n"
+						"Jackie Jackson\n"
+						"Chris Jones\n"
+						"Amanda Cullen\n"
+						"Jeremy Goodwin\n";
+
+	char filename[] = "TestData/namelistdata.txt";
+	char output[1024];
+
+	FILE * f = fopen(filename, "w");
+	fprintf(f, "%s", testdata);
+	fclose(f);
+	EmployeeListRemoval_removeFromFile(filename, input);
+	f = fopen(filename, "r");
+	fread(output, sizeof(char), sizeof(output), f);
+	fclose(f);
+	STRCMP_EQUAL(expect, output);
+}
+
