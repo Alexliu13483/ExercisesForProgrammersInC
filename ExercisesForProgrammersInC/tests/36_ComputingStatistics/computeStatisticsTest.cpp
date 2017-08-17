@@ -51,7 +51,7 @@ TEST(computeStatisticsTest, zeroNumber)
 	char input[] = "done\n";
 
 	FakeConsoleIO_setKeyInBuffer(input);
-	computeStatistics_run();
+	computeStatistics_run_interact();
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
 
@@ -68,7 +68,7 @@ TEST(computeStatisticsTest, oneNumber)
 	char input[] = "100\ndone\n";
 
 	FakeConsoleIO_setKeyInBuffer(input);
-	computeStatistics_run();
+	computeStatistics_run_interact();
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
 
@@ -88,6 +88,20 @@ TEST(computeStatisticsTest, aFewNumbers)
 	char input[] = "100\n200\n1000\n300\ndone\n";
 
 	FakeConsoleIO_setKeyInBuffer(input);
-	computeStatistics_run();
+	computeStatistics_run_interact();
+	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
+}
+
+TEST(computeStatisticsTest, inputFromFile)
+{
+	char expect[] =
+			"Numbers: 100, 200, 1000, 300\n"
+			"The average is 400.\n"
+			"The minimum is 100.\n"
+			"The maximum is 1000.\n"
+			"The standard deviation is 353.55.\n";
+	char filename[] = "TestData/computeStatisticsData.txt";
+
+	computeStatistics_run_file(filename);
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }

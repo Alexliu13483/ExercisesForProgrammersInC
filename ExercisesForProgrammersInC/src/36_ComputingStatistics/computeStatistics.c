@@ -12,6 +12,13 @@
 #include "Common/Common.h"
 #include "Common/ConsoleIO.h"
 
+typedef struct {
+	int min;
+	int max;
+	double sd;
+	double avg;
+} Statistic_Result;
+
 #define MAX_ARRAY_NUMBER	100
 int numbers[MAX_ARRAY_NUMBER];
 
@@ -92,24 +99,72 @@ static double calStandardDeviation(int countNum, double avg) {
 	return sqrt(sqr_sum / (double) countNum);
 }
 
-void computeStatistics_run() {
+static void calStatistics(int countNum, Statistic_Result * results) {
+	if (countNum != 0) {
+		results->avg = calMeanValue(countNum);
+		results->min = findMinimum(countNum);
+		results->max = findMaximum(countNum);
+		results->sd = calStandardDeviation(countNum, results->avg);
+	}
+}
+
+void computeStatistics_run_interact() {
 	int countNum = 0;
-	int min = 0;
-	int max = 0;
-	double sd = 0.0;
-	double avg = 0.0;
+	Statistic_Result result;
+	result.min = 0;
+	result.max = 0;
+	result.sd = 0.0;
+	result.avg = 0.0;
 
 	countNum = getInputNumbers();
 
-	if (countNum != 0) {
-		avg = calMeanValue(countNum);
+	calStatistics(countNum, &result);
 
-		min = findMinimum(countNum);
+	outputResults(countNum, result.avg, result.min, result.max, result.sd);
+}
 
-		max = findMaximum(countNum);
+static void stripNewLine(char * inString) {
+	for (int i = 0; i < 100; i++)
+		if (inString[i] == '\0' || inString[i] == '\n' || inString[i] == '\r') {
+			inString[i] = '\0';
+			break;
+		}
+}
 
-		sd = calStandardDeviation(countNum, avg);
+static int readNumbersFromFile(char * inString, FILE* file) {
+	int countNum = 0;
+	while (countNum < MAX_ARRAY_NUMBER) {
+		if (fgets(inString, 100, file) == NULL)
+			break;
+
+		stripNewLine(inString);
+		if (Common_isIntegerString(inString)) {
+			numbers[countNum] = atoi(inString);
+			countNum++;
+		}
+	}
+	return countNum;
+}
+
+void computeStatistics_run_file(char * filename) {
+	FILE * file = fopen(filename, "r");
+	char inString[100];
+	int countNum = 0;
+	Statistic_Result result;
+	result.min = 0;
+	result.max = 0;
+	result.sd = 0.0;
+	result.avg = 0.0;
+
+	if (file == NULL) {
+		ConsoleIO_printf("Open file [%s] failed!!!\n", filename);
+		return;
 	}
 
-	outputResults(countNum, avg, min, max, sd);
+	countNum = readNumbersFromFile(inString, file);
+	fclose(file);
+
+	calStatistics(countNum, &result);
+
+	outputResults(countNum, result.avg, result.min, result.max, result.sd);
 }
