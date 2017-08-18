@@ -5,11 +5,16 @@
  *      Author: Alex.Liu
  */
 
+#include <stdlib.h>
+#include <string.h>
 #include "Common/Common.h"
+#include "FakeRandomNumber.h"
 
 static int seed;
 static int increment;
-
+static int * randomList;
+static int sizeOfNumberList;
+static int NumCcounter;
 
 void FakeRandomNumber_SetFirstAndIncrement(int s, int i) {
 	seed = s;
@@ -31,3 +36,28 @@ void FakeRandomNumber_create() {
 	Common_rand = FakeRandomNumber_Get;
 	FakeRandomNumber_Reset();
 }
+
+
+static void FakeRandomNumber_Multiple_Reset() {
+	randomList = (int *)NULL;
+	sizeOfNumberList = 0;
+	NumCcounter = 0;
+}
+
+void FakeRandomNumber_Multiple_create() {
+	Common_rand = FakeRandomNumber_Multiple_Get;
+	FakeRandomNumber_Multiple_Reset();
+}
+
+void FakeRandomNumber_Multiple_SetNumbers(int * numbers, int sizeOfNumbers) {
+	randomList = numbers;
+	sizeOfNumberList = sizeOfNumbers;
+}
+
+int FakeRandomNumber_Multiple_Get() {
+	if (NumCcounter >= sizeOfNumberList)
+		return -1;
+
+	return randomList[NumCcounter++];
+}
+

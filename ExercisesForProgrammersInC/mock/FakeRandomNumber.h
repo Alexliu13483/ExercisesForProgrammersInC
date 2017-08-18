@@ -13,4 +13,9 @@ int FakeRandomNumber_Get(void);
 void FakeRandomNumber_Reset(void);
 void FakeRandomNumber_create(void);
 
+#define MAX_RANDOM_NUMBERS		100
+void FakeRandomNumber_Multiple_create();
+void FakeRandomNumber_Multiple_SetNumbers(int * numbers, int sizeOfNumbers);
+int FakeRandomNumber_Multiple_Get();
+
 #endif /* MOCK_FAKERANDOMNUMBER_H_ */
