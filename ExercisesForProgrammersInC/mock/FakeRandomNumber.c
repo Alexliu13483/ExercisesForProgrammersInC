@@ -56,7 +56,7 @@ void FakeRandomNumber_Multiple_SetNumbers(int * numbers, int sizeOfNumbers) {
 
 int FakeRandomNumber_Multiple_Get() {
 	if (NumCcounter >= sizeOfNumberList)
-		return -1;
+		return 0;
 
 	return randomList[NumCcounter++];
 }

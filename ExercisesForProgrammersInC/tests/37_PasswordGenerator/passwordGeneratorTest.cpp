@@ -30,7 +30,7 @@ TEST_GROUP(passwordGeneratorTest)
     void setup()
     {
     	INIT_FAKE_CONSOLE();
-    	FakeRandomNumber_create();
+    	FakeRandomNumber_Multiple_create();
     	passwordGenerator_create();
     }
 
@@ -56,18 +56,29 @@ TEST(passwordGeneratorTest, zeroLength)
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
 
-IGNORE_TEST(passwordGeneratorTest, normalTest1)
+TEST(passwordGeneratorTest, alphetOnlyTest)
 {
 	char expect[] =
 			"What's the minimum length 8\n"
-			"How many special characters 2\n"
-			"How many numbers 2\n"
+			"How many special characters 0\n"
+			"How many numbers 0\n"
 			"Your password is\n"
-			"aurn2$1s#";
-	char input[] = "0\n0\n0\n";
+			"abcdeABCD\n";
+	char input[] = "8\n0\n0\n";
+	int numbers[] = {	// Random number to choose password data
+					1,	// length
+					0, 0,
+					0, 1,
+					0, 2,
+					0, 3,
+					0, 4,	// "abcde"
+					0, 26,
+					0, 27,
+					0, 28,
+					0, 29}; // "ABCD"
 
 	FakeConsoleIO_setKeyInBuffer(input);
-	FakeRandomNumber_SetFirstAndIncrement(9, 0);
+	FakeRandomNumber_Multiple_SetNumbers(numbers, 19);
 	passwordGenerator_run();
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }

@@ -33,8 +33,6 @@ static int getDivisor(int difficulty) {
 }
 
 static int getGuessNumber(char * inputBuffer, int * counterRetry) {
-	int result;
-
 	(*counterRetry)++;
 	Common_getStringFromConsole(inputBuffer);
 	while (!Common_isIntegerString(inputBuffer)) {

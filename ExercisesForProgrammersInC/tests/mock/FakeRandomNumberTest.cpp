@@ -96,7 +96,7 @@ TEST(FakeRandomNumberTest_Mul, threeNumbers)
 TEST(FakeRandomNumberTest_Mul, overNumbers)
 {
 	int numbers[] = {100, 200, 300};
-	int expect_error = -1;
+	int expect_error = 0;
 
 	FakeRandomNumber_Multiple_SetNumbers(numbers, 3);
 	for (int i = 0; i < 3; i++)
