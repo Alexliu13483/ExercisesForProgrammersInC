@@ -78,7 +78,7 @@ TEST(passwordGeneratorTest, alphetOnlyTest)
 					0, 29}; // "ABCD"
 
 	FakeConsoleIO_setKeyInBuffer(input);
-	FakeRandomNumber_Multiple_SetNumbers(numbers, 19);
+	FakeRandomNumber_Multiple_SetNumbers(numbers, sizeof(numbers)/sizeof(int));
 	passwordGenerator_run();
 	STRCMP_EQUAL(expect, FakeConsoleIO_getOutputString());
 }
