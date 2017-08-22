@@ -44,9 +44,9 @@ void passwordGenerator_create() {
 	numAlphbets = 0;
 	password[0] = '\0';
 
-	sizeOfNumbers = sizeof(tblNumbers) - 1;
-	sizeOfAlphabet = sizeof(tblAlaphet) - 1;
-	sizeOfSpecials = sizeof(tblSpecials) - 1;
+	sizeOfNumbers = strlen(tblNumbers);
+	sizeOfAlphabet = strlen(tblAlaphet);
+	sizeOfSpecials = strlen(tblSpecials);
 }
 
 static Char_Type decideCharType() {
