@@ -10,5 +10,6 @@
 
 void FilteringValues_create();
 void FilteringValues_run();
+void FilteringValues_filterFile(char * filename, char * outputFileName);
 
 #endif /* INCLUDE_38_FILTERING_VALUES_FILTERINGVALUES_H_ */
