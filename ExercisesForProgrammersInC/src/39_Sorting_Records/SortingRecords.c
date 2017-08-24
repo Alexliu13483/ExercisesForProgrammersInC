@@ -46,68 +46,96 @@ static int extractRecords(char * inputData) {
 	int cnt = 0;
 	int len = 0;
 	char * record;
+	char str_token[] = ",\n";
 
-	char* pch = strtok(inputData, ", \n");
+	char* pch = strtok(inputData, str_token);
 	while (pch != NULL) {
 		len = strlen(pch);
 		record = (char *) malloc(len+1);
 		strcpy(record, pch);
 		database[cnt].firstName = record;
-		pch = strtok(NULL, ", \n");
+		pch = strtok(NULL, str_token);
 
 		len = strlen(pch);
 		record = (char *) malloc(len+1);
 		strcpy(record, pch);
 		database[cnt].lastName = record;
-		pch = strtok(NULL, ", \n");
+		pch = strtok(NULL, str_token);
 
 		len = strlen(pch);
 		record = (char *) malloc(len+1);
 		strcpy(record, pch);
 		database[cnt].position = record;
-		pch = strtok(NULL, ", \n");
+		pch = strtok(NULL, str_token);
 
 		len = strlen(pch);
 		record = (char *) malloc(len+1);
 		strcpy(record, pch);
 		database[cnt].sepDate = record;
-		pch = strtok(NULL, ", \n");
+		pch = strtok(NULL, str_token);
 		cnt++;
 	}
 	return cnt;
 }
 
-void SortingRecords_sort(char * inputRecords) {
+static void printDataBase(Personnel_Record ** data) {
 	char strHeader[] =  "Name                | Position          | Separation Date\n"
 						"--------------------|-------------------|----------------\n";
-
-	record_count = extractRecords(inputRecords);
 
 	ConsoleIO_printf(strHeader);
 
 	int temLen = 0;
 	int spaces = 0;
-	for (int i = 1; i < record_count; i++) {
-		temLen = strlen(database[i].firstName) + strlen(database[i].lastName);
+	for (int i = 0; i < record_count; i++) {
+		temLen = strlen(data[i]->firstName) + strlen(data[i]->lastName);
 		if (temLen >= 19)
 			spaces = 0;
 		else
 			spaces = 19 - temLen;
 
-		ConsoleIO_printf("%s %s", database[i].firstName, database[i].lastName);
+		ConsoleIO_printf("%s %s", data[i]->firstName, data[i]->lastName);
 		for (int j = 0; j < spaces; j++)
 			ConsoleIO_printf(" ");
 
-		temLen = strlen(database[i].position);
+		temLen = strlen(data[i]->position);
 		if (temLen >= 18)
 			spaces = 0;
 		else
 			spaces = 18 - temLen;
 
-		ConsoleIO_printf("| %s", database[i].position);
+		ConsoleIO_printf("| %s", data[i]->position);
 		for (int j = 0; j < spaces; j++)
 			ConsoleIO_printf(" ");
 
-		ConsoleIO_printf("| %s\n", database[i].sepDate);
+		ConsoleIO_printf("| %s\n", data[i]->sepDate);
 	}
+
+}
+
+static void sortRecords(Personnel_Record ** sortedData) {
+	int * orderlist = (int *) malloc(sizeof(int) * record_count);
+	for (int i = 0; i < record_count; i++)
+		orderlist[i] = i;
+
+	for (int i = 0; i < record_count - 1; i++)
+		for (int j = i + 1; j < record_count; j++) {
+			if (strcmp(database[orderlist[i]].lastName, database[orderlist[j]].lastName) > 0) {
+				int temp = orderlist[i];
+				orderlist[i] = orderlist[j];
+				orderlist[j] = temp;
+			}
+		}
+
+	for (int i = 0; i < record_count; i++)
+		sortedData[i] = &database[orderlist[i]];
+
+	free(orderlist);
+}
+
+void SortingRecords_sort(char * inputRecords) {
+	record_count = extractRecords(inputRecords);
+	Personnel_Record ** sortedData = (Personnel_Record **)malloc(sizeof(Personnel_Record *) * record_count);
+	sortRecords(sortedData);
+	printDataBase(sortedData);
+	free(sortedData);
 }
