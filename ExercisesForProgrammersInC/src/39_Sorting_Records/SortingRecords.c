@@ -42,7 +42,7 @@ void SortingRecords_destroy() {
 	}
 }
 
-static int extractRecords(char * inputData) {
+int SortingRecords_CreateDatabase(char * inputData) {
 	int cnt = 0;
 	int len = 0;
 	char * record;
@@ -75,10 +75,11 @@ static int extractRecords(char * inputData) {
 		pch = strtok(NULL, str_token);
 		cnt++;
 	}
+	record_count = cnt;
 	return cnt;
 }
 
-static void printDataBase(Personnel_Record ** data) {
+static void printDatabase(Personnel_Record ** data) {
 	char strHeader[] =  "Name                | Position          | Separation Date\n"
 						"--------------------|-------------------|----------------\n";
 
@@ -112,6 +113,44 @@ static void printDataBase(Personnel_Record ** data) {
 
 }
 
+void SortingRecords_printRecords(int * inxRecords) {
+	char strHeader[] =  "\nResults:\n"
+						"Name                | Position          | Separation Date\n"
+						"--------------------|-------------------|----------------\n";
+
+	ConsoleIO_printf(strHeader);
+
+	int temLen = 0;
+	int spaces = 0;
+	int count = 0;
+	int i = 0;
+	while (inxRecords[count] != -1) {
+		i = inxRecords[count];
+		temLen = strlen(database[i].firstName) + strlen(database[i].lastName);
+		if (temLen >= 19)
+			spaces = 0;
+		else
+			spaces = 19 - temLen;
+
+		ConsoleIO_printf("%s %s", database[i].firstName, database[i].lastName);
+		for (int j = 0; j < spaces; j++)
+			ConsoleIO_printf(" ");
+
+		temLen = strlen( database[i].position);
+		if (temLen >= 18)
+			spaces = 0;
+		else
+			spaces = 18 - temLen;
+
+		ConsoleIO_printf("| %s",  database[i].position);
+		for (int j = 0; j < spaces; j++)
+			ConsoleIO_printf(" ");
+
+		ConsoleIO_printf("| %s\n",  database[i].sepDate);
+		count++;
+	}
+}
+
 static void sortRecords(Personnel_Record ** sortedData) {
 	int * orderlist = (int *) malloc(sizeof(int) * record_count);
 	for (int i = 0; i < record_count; i++)
@@ -132,10 +171,21 @@ static void sortRecords(Personnel_Record ** sortedData) {
 	free(orderlist);
 }
 
+void SortingRecords_filter(char * strFilter, int * results) {
+	int count = 0;
+	if (strlen(strFilter) == 0)
+		return;
+	for (int i = 0; i < record_count; i++)
+		if (strstr(database[i].lastName, strFilter) != NULL)
+			results[count++] = i;
+		else if (strstr(database[i].firstName, strFilter) != NULL)
+			results[count++] = i;
+}
+
 void SortingRecords_sort(char * inputRecords) {
-	record_count = extractRecords(inputRecords);
+	SortingRecords_CreateDatabase(inputRecords);
 	Personnel_Record ** sortedData = (Personnel_Record **)malloc(sizeof(Personnel_Record *) * record_count);
 	sortRecords(sortedData);
-	printDataBase(sortedData);
+	printDatabase(sortedData);
 	free(sortedData);
 }
