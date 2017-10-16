@@ -59,3 +59,21 @@ TEST(NameSorterTest, oneRecFile)
 	NameSorter_output_string(filename, result);
 	STRCMP_EQUAL(expect, result);
 }
+
+TEST(NameSorterTest, aNamelistFile)
+{
+	char expect[] = "Total of 7 names\n"
+					"-----------------\n"
+					"Johnson, Jim\n"
+					"Jones, Aaron\n"
+					"Jones, Chris\n"
+					"Ling, Mai\n"
+					"Swift, Geoffrey\n"
+					"Xiong, Fong\n"
+					"Zarnecki, Sabrina\n";
+	char result[1000];
+	char filename[] = "TestData/NameListForSoring.txt";
+
+	NameSorter_output_string(filename, result);
+	STRCMP_EQUAL(expect, result);
+}

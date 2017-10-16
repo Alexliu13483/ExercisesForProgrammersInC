@@ -53,6 +53,14 @@ static void sortNames(void) {
 	for (int i = 0; i < lineCount; i++)
 		resultIndex[i] = i;
 
+	for (int i = 0; i < lineCount - 1; i++)
+		for (int j = i + 1; j < lineCount; j++) {
+			if (strcmp(names[resultIndex[i]], names[resultIndex[j]]) > 0) {
+				int temp = resultIndex[i];
+				resultIndex[i] = resultIndex[j];
+				resultIndex[j] = temp;
+			}
+		}
 }
 
 static void outputResultToString(char * outString) {
