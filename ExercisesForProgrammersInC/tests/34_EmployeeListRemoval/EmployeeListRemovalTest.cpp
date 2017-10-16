@@ -117,14 +117,15 @@ TEST(EmployeeListRemovalTest, name_list_in_file)
 
 	char filename[] = "TestData/namelistdata.txt";
 	char output[1024];
+	int actual_size = 0;
 
 	FILE * f = fopen(filename, "w");
 	fprintf(f, "%s", testdata);
 	fclose(f);
 	EmployeeListRemoval_removeFromFile(filename, input);
 	f = fopen(filename, "r");
-	fread(output, sizeof(char), sizeof(output), f);
+	actual_size = fread(output, sizeof(char), sizeof(output), f);
 	fclose(f);
-	STRCMP_EQUAL(expect, output);
+	STRNCMP_EQUAL(expect, output, actual_size);
 }
 
