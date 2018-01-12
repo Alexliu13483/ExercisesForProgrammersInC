@@ -56,7 +56,7 @@ char * ComputingInterest_calInterestWithConsoleInput() {
 	years = atoi(timeStr);
 
 	result = ComputingInterest_calculateSimpleInterest(principal, interestRate, years);
-	sprintf(outputStr, "After %d years at %.1f\%, the investment will be worth $%.0f.\n", years, interestRate, result);
+	sprintf(outputStr, "After %d years at %.1f%%, the investment will be worth $%.0f.\n", years, interestRate, result);
 	puts(outputStr);
 	return outputStr;
 }
